@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,16 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model recipe {
-  id          Int           @id
-  title       String
-  image       String
-  imageType   String
-  ingredients ingredient[] 
+model recipes_ingredients {
+  id            Int       @id @default(autoincrement())
+  recipeId      Int
+  ingredientsId Int
+  recipes       recipes   @relation(fields: [recipeId], references: [id])
+  ingredients   ingredients @relation(fields: [ingredientsId], references: [id])
 }
 
-model ingredient {
-  id     Int       @id
-  name String
-  recipes recipe[] 
+model ingredients {
+  id       Int                 @id @default(autoincrement())
+  name     String
+  category String
+  recipes_ingredients recipes_ingredients[]
+}
+
+model users {
+  id       Int             @id @default(autoincrement())
+  username String
+  email    String          @unique
+  password String
+  users_recipes users_recipes[]
+  preferences   preferences[]
+  isadmin Boolean
+}
+
+model users_recipes {
+  id               Int     @id @default(autoincrement())
+  userId           Int
+  recipeId         Int
+  rating           Int?
+  reviewMsg        String?
+  users            users   @relation(fields: [userId], references: [id])
+  recipes          recipes @relation(fields: [recipeId], references: [id])
+}
+
+model preferences {
+  id              Int   @id @default(autoincrement())
+  userId          Int
+  glutenFree      Boolean
+  ketogenic       Boolean
+  lactoVegetarian Boolean
+  ovoVegetarian   Boolean
+  vegan           Boolean
+  pescetarian     Boolean
+  paleo           Boolean
+  primal          Boolean
+  lowFODMAP       Boolean
+  whole30         Boolean
+  users           users @relation(fields: [userId], references: [id])
+}
+
+model recipes {
+  id                Int                 @id @default(autoincrement())
+  title              String
+  instructions     String
+  servings          Int
+  users_recipes    users_recipes[]
+  recipes_ingredients recipes_ingredients[]
 }
