@@ -1,13 +1,19 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
 
 async function main() {
   // Seed Users table
+  const hashedPass1 = await bcrypt.hash(`admin1`, 10);
+  const hashedPass2 = await bcrypt.hash(`admin2`, 10);
+  const hashedPass3 = await bcrypt.hash(`admin3`, 10);
+  const hashedPass4 = await bcrypt.hash(`admin4`, 10);  
+
   const admin1 = await prisma.users.create({
     data: {
       username: 'admin1',
       email: 'admin1@example.com',
-      password: 'admin1',
+      password: hashedPass1,
       isadmin: true,
     },
   });
@@ -16,7 +22,7 @@ async function main() {
     data: {
       username: 'admin2',
       email: 'admin2@example.com',
-      password: 'admin2',
+      password: hashedPass2,
       isadmin: true,
     },
   });
@@ -25,7 +31,7 @@ async function main() {
     data: {
       username: 'admin3',
       email: 'admin3@example.com',
-      password: 'admin3',
+      password: hashedPass3,
       isadmin: true,
     },
   });
@@ -34,13 +40,10 @@ async function main() {
     data: {
       username: 'admin4',
       email: 'admin4@example.com',
-      password: 'admin4',
+      password: hashedPass4,
       isadmin: true,
     },
   });
- 
-
-
 
   // Seed Users_Recipes table
   const userRecipe = await prisma.users_recipes.create({
