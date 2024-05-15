@@ -11,7 +11,9 @@ apiRouter.get("/", (req, res) => {
 const recipesRouter = require("./recipes.cjs");
 apiRouter.use("/recipes", recipesRouter);
 
-//write route for auth
+//write route for users
+const usersRouter = require("./users.cjs");
+apiRouter.use("/users", usersRouter);
 
 //export
 module.exports = apiRouter;
