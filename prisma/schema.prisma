@@ -65,4 +65,15 @@ model recipes {
   servings          Int
   users_recipes    users_recipes[]
   recipes_ingredients recipes_ingredients[]
+  ratingsAndReviews ratingsAndReviews[]
+
+}
+
+
+model ratingsAndReviews {
+  id         Int     @id @default(autoincrement())
+  recipeId   Int
+  rating     Float
+  reviewMsg  String
+  recipe     recipes @relation(fields: [recipeId], references: [id])
 }
