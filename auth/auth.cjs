@@ -1,8 +1,10 @@
+require("dotenv").config();
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const prisma = require("../db/connection.js");
-const { verifyToken } = require("./middleware.js");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const { verifyToken } = require("./middleware.cjs");
 
 const signToken = ({ id, isAdmin }) => jwt.sign({ id, isAdmin }, process.env.JWT_SECRET);
 
@@ -13,9 +15,9 @@ router.post("/register", async (req, res, next) => {
     req.body.password = hashedPassword;
 
     //Prevent admin through a post
-    delete req.body.isAdmin;
+    //delete req.body.isAdmin;
 
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: req.body
     });
 
@@ -31,21 +33,20 @@ router.post("/register", async (req, res, next) => {
 // Login to an existing user account
 router.post("/login", async (req, res, next) => {
   try {
-    const user = await prisma.user.findFirst({
+    const user = await prisma.users.findUnique({
       where: {
-        username: req.body.username,
+        email: req.body.email
       },
     });
-    const isIn = await bcrypt.compare(req.body.password, user.password);
+    const matchPassword = await bcrypt.compare(req.body.password, user?.password);
 
-    if (!isIn) {
-      return res.status(401).send("Invalid login credentials.");
+    if (!user || !matchPassword) {
+      res.status(401).send("Invalid login credentials.");
+    } else {
+      const token = signToken(user);
+      // Create a token with user info
+      res.send({ token });
     }
-
-    // Create a token with user info
-    const token = signToken(user);
-
-    res.send({ token });
   } catch (error) {
     next(error);
   }
@@ -55,7 +56,7 @@ router.post("/login", async (req, res, next) => {
 router.get("/me", verifyToken, async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: parseInt(userId) },
     });
 
@@ -70,4 +71,3 @@ router.get("/me", verifyToken, async (req, res, next) => {
 });
 
 module.exports = router;
-

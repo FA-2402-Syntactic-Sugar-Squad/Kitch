@@ -36,8 +36,8 @@ model users_recipes {
   id               Int     @id @default(autoincrement())
   userId           Int
   recipeId         Int
-  rating           Int?
-  reviewMsg        String?
+  rating           Int? 
+  reviewMsg        String? 
   users            users   @relation(fields: [userId], references: [id])
   recipes          recipes @relation(fields: [recipeId], references: [id])
 }
