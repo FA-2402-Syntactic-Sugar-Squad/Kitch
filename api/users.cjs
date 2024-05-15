@@ -11,7 +11,7 @@ usersRouter.get("/", async (req, res) => {
   res.send("This is the users route");
 });
 
-//GET: Profile NOT WORKING DO NOT USE YET
+//GET: Profile
 usersRouter.get("/profile", verifyToken, async (req, res) => {
   try{
     const id = req.user.id;
@@ -41,7 +41,7 @@ usersRouter.put("/update-rating-and-review/:id", verifyToken, async (req, res) =
   }
 });
 
-//Post: create reviews and ratings on non-saved recipes anonymously
+//Post: create reviews and ratings on non-saved recipes anonymously - NOT WORKING
 usersRouter.post("/recipes/:recipeId/ratings-reviews", async (req, res) => {
   try{
     const { rating, reviewMsg } = req.body;

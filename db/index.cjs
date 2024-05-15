@@ -42,7 +42,7 @@ const updateRatingsAndReviews = async(id, rating, reviewMsg) => {
   }
 };
 
-//user: leave a rating and review on recipes that are not saved.
+//user: leave a rating and review on recipes that are not saved. NOT WORKING
 const createRatingAndReviewForRecipe = async (recipeId, rating, reviewMsg) => {
   try{
     const createdRatingAndReview = await prisma.users_recipes.create({
