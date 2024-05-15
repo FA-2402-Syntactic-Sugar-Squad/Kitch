@@ -9,16 +9,12 @@ const prisma = new PrismaClient();
 //recipes: find review and/or rating under specific rating
 
 //user: get profile
-const getUserInfo = async(userId) => {
+const getUserInfo = async(id) => {
   try{
     const userInfo = await prisma.users.findUnique({
-      where: { id : userId },
+      where: { id : id },
       include: {
-        users_recipes: {
-          include: {
-            recipes: true,
-          },
-        },
+        users_recipes: true,
         preferences: true,
       },
     });

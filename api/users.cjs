@@ -14,9 +14,9 @@ usersRouter.get("/", async (req, res) => {
 //GET: Profile NOT WORKING DO NOT USE YET
 usersRouter.get("/profile", verifyToken, async (req, res) => {
   try{
-    const userId = req.user.userId;
+    const id = req.user.id;
 
-    const fetchProfile = await getUserInfo(parseInt(userId));
+    const fetchProfile = await getUserInfo(id);
     if (!fetchProfile) {
       return res.status(404).send({ message: "User not found" });
     }
