@@ -3,11 +3,13 @@ const prisma = new PrismaClient();
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const apiRouter = require("./api/index.cjs");
 
 const port = process.env.PORT || 8080
 
 //middleware
+app.use(cors());
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 const path = require("path");

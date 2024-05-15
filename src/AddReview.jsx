@@ -18,26 +18,29 @@ const AddReview = ({ recipeId, onReviewAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/users/recipes/631741/ratings-reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reviewData),
-      });
+      const response = await fetch(
+        `/api/users/recipes/631741/ratings-reviews`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reviewData),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       console.log("Review added:", response.data);
-// onReviewAdded() will be called on recipe page for rendering purpose
+      // onReviewAdded() will be called on recipe page for rendering purpose
       // onReviewAdded();
 
       setReviewData({
         rating: 0,
         reviewMsg: "",
-        recipeId: "631741"
+        recipeId: "631741",
       });
     } catch (error) {
       console.error("Error adding review:", error);
