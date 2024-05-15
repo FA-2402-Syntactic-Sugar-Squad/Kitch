@@ -4,7 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const apiRouter = require("./api/index.cjs");
-
+const router = require("./auth/auth.cjs")
 const port = process.env.PORT || 8080
 
 //middleware
@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 
 //Server
 app.use("/api", apiRouter);
+app.use("/auth", router);
 app.use("/", express.static(path.join(__dirname, "/dist")))
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"))
