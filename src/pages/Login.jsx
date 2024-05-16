@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 const Login = ({ setToken }) => {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); 
@@ -19,7 +18,6 @@ const Login = ({ setToken }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ 
-          username, 
           email, 
           password })
       });
@@ -46,16 +44,6 @@ const Login = ({ setToken }) => {
     <>
       <h1>Login</h1>
       <form onSubmit={submitHandler}>
-        <label>
-          Username:
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
-        </label>
         <label>
           Email:
           <input

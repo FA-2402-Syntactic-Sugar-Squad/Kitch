@@ -4,13 +4,13 @@ import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { FaSearch } from "react-icons/fa";
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 
 function NavBar({ token, setToken }) {
   const [input, setInput] = useState("");
 
+  //Can't fetch recipes_ingredients until route is created
   const fetchData = async (value) => {
     //make a request to the ingredients
     const response = await fetch()
