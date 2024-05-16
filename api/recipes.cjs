@@ -29,6 +29,16 @@ recipesRouter.get("/:recipeId", async (req, res, next) => {
   }
 });
 
+// GET all recipes 
+recipesRouter.get('/', async (req, res, next) => {
+  try {
+    const recipes = await prisma.recipes.findMany();
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error when getting recipes:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 //test
 recipesRouter.get("/:recipeName", async (req,res,next) => {
