@@ -53,7 +53,8 @@ const Register = () => {
       });
       const json = await result.json();
       console.log(json)
-      navigate("auth/Login");
+      //not going to login page after submit
+      navigate("/Login");
     } catch (error) {
       console.log(error);
     }
