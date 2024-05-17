@@ -24,11 +24,11 @@ model ingredients {
 
 model users {
   id       Int             @id @default(autoincrement())
-  username String
+  username String          @unique
   email    String          @unique
   password String
   users_recipes users_recipes[]
-  preferences   preferences[]
+  preferences   preferences?
   isadmin Boolean
 }
 
@@ -44,17 +44,17 @@ model users_recipes {
 
 model preferences {
   id              Int   @id @default(autoincrement())
-  userId          Int
-  glutenFree      Boolean
-  ketogenic       Boolean
-  lactoVegetarian Boolean
-  ovoVegetarian   Boolean
-  vegan           Boolean
-  pescetarian     Boolean
-  paleo           Boolean
-  primal          Boolean
-  lowFODMAP       Boolean
-  whole30         Boolean
+  userId          Int      @unique
+  glutenFree      Boolean  @default(false)
+  ketogenic       Boolean  @default(false)
+  lactoVegetarian Boolean  @default(false)
+  ovoVegetarian   Boolean  @default(false)
+  vegan           Boolean  @default(false)
+  pescetarian     Boolean  @default(false)
+  paleo           Boolean  @default(false)
+  primal          Boolean  @default(false)
+  lowFODMAP       Boolean  @default(false)
+  whole30         Boolean  @default(false)
   users           users @relation(fields: [userId], references: [id])
   recipes         recipe_preference[]
 }
