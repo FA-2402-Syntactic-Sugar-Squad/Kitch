@@ -17,9 +17,19 @@ router.post("/register", async (req, res, next) => {
     //Prevent admin through a post
     //delete req.body.isAdmin;
 
+    const { preferences, ...userData } = req.body;
     const user = await prisma.users.create({
-      data: req.body
+      data: userData,
     });
+
+    if (preferences) {
+      await prisma.preferences.create({
+        data: {
+          userId: user.id,
+          ...preferences,
+        },
+      });
+    }
 
     // Create a token with user info
     const token = signToken(user);

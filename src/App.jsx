@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route } from "react-router-dom";
 import NavBar from './components/NavBar.jsx';
 import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
 import './App.css'
 
 function App() {
@@ -20,8 +21,9 @@ function App() {
       {/*We need to remove the hard coded recipe id in the url in AddReview.jsx*/}
       <NavBar token={token} setToken={setToken}/>
       <Routes>
-        <Route path="/" element={<h2>HOME</h2>}/>
+        <Route path="/" element={<h2>HOME</h2>}/>        
         <Route path="/login" element={<Login token={token} setToken={setToken}/>}/>
+        <Route path="/register" element={<Register/>}/>
       </Routes>
     </>
   )
