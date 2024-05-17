@@ -56,6 +56,7 @@ model preferences {
   lowFODMAP       Boolean
   whole30         Boolean
   users           users @relation(fields: [userId], references: [id])
+  recipes         recipe_preference[]
 }
 
 model recipes {
@@ -63,11 +64,34 @@ model recipes {
   title              String
   instructions     String
   servings          Int
+  imageurl           String? 
   users_recipes    users_recipes[]
   recipes_ingredients recipes_ingredients[]
   ratingsAndReviews ratingsAndReviews[]
-
+  glutenFree          Boolean @default(false)
+  ketogenic           Boolean @default(false)
+  lactoVegetarian     Boolean @default(false)
+  ovoVegetarian       Boolean @default(false)
+  vegan               Boolean @default(false)
+  pescetarian         Boolean @default(false)
+  paleo               Boolean @default(false)
+  primal              Boolean @default(false)
+  lowFODMAP           Boolean @default(false)
+  whole30             Boolean @default(false)
+  preferences         recipe_preference[]
 }
+
+
+model recipe_preference {
+  recipeId      Int
+  preferenceId  Int
+
+  recipe        recipes     @relation(fields: [recipeId], references: [id])
+  preference    preferences @relation(fields: [preferenceId], references: [id])
+
+  @@id([recipeId, preferenceId])
+}
+
 
 
 model ratingsAndReviews {
