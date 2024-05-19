@@ -8,42 +8,42 @@ datasource db {
 }
 
 model recipes_ingredients {
-  id            Int       @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   recipeId      Int
   ingredientsId Int
-  recipes       recipes   @relation(fields: [recipeId], references: [id])
+  recipes       recipes     @relation(fields: [recipeId], references: [id])
   ingredients   ingredients @relation(fields: [ingredientsId], references: [id])
 }
 
 model ingredients {
-  id       Int                 @id @default(autoincrement())
-  name     String
-  category String
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  category            String
   recipes_ingredients recipes_ingredients[]
 }
 
 model users {
-  id       Int             @id @default(autoincrement())
-  username String
-  email    String          @unique
-  password String
+  id            Int             @id @default(autoincrement())
+  username      String
+  email         String          @unique
+  password      String
   users_recipes users_recipes[]
   preferences   preferences[]
-  isadmin Boolean
+  isadmin       Boolean
 }
 
 model users_recipes {
-  id               Int     @id @default(autoincrement())
-  userId           Int
-  recipeId         Int
-  rating           Int? 
-  reviewMsg        String? 
-  users            users   @relation(fields: [userId], references: [id])
-  recipes          recipes @relation(fields: [recipeId], references: [id])
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  recipeId  Int
+  rating    Int?
+  reviewMsg String?
+  users     users   @relation(fields: [userId], references: [id])
+  recipes   recipes @relation(fields: [recipeId], references: [id])
 }
 
 model preferences {
-  id              Int   @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   userId          Int
   glutenFree      Boolean
   ketogenic       Boolean
@@ -55,25 +55,26 @@ model preferences {
   primal          Boolean
   lowFODMAP       Boolean
   whole30         Boolean
-  users           users @relation(fields: [userId], references: [id])
+  users           users    @relation(fields: [userId], references: [id])
+  recipes         recipes? @relation(fields: [recipesId], references: [id])
+  recipesId       Int?
 }
 
 model recipes {
-  id                Int                 @id @default(autoincrement())
-  title              String
-  instructions     String
-  servings          Int
-  users_recipes    users_recipes[]
+  id                  Int                   @id @default(autoincrement())
+  title               String
+  instructions        String
+  servings            Int
+  diets               preferences[]
+  users_recipes       users_recipes[]
   recipes_ingredients recipes_ingredients[]
-  ratingsAndReviews ratingsAndReviews[]
-
+  ratingsAndReviews   ratingsAndReviews[]
 }
 
-
 model ratingsAndReviews {
-  id         Int     @id @default(autoincrement())
-  recipeId   Int
-  rating     Float
-  reviewMsg  String
-  recipe     recipes @relation(fields: [recipeId], references: [id])
+  id        Int     @id @default(autoincrement())
+  recipeId  Int
+  rating    Float
+  reviewMsg String
+  recipe    recipes @relation(fields: [recipeId], references: [id])
 }

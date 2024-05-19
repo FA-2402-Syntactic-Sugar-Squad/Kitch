@@ -28,7 +28,7 @@ function NavBar({ token, setToken }) {
     <Navbar expand="lg" className="bg-body-tertiary">
       {token ? (
         <Container fluid>
-          <Navbar.Brand href="#">Kitch</Navbar.Brand>
+          <Navbar.Brand to="/"> Kitch </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
             <Nav
@@ -49,7 +49,7 @@ function NavBar({ token, setToken }) {
               <Button variant="outline-success">Search</Button>
             </Nav>
 
-            <Nav.Link to="/" >Home</Nav.Link>
+            <Link to="/">Home</Link>
             <NavDropdown title="Account" id="navbarScrollingDropdown" >
               <NavDropdown.Item href="#action3">My Profile</NavDropdown.Item>
               <NavDropdown.Item href="#action4">
@@ -91,7 +91,7 @@ function NavBar({ token, setToken }) {
               <Button variant="outline-success">Search</Button>
             </Nav>
 
-            <Nav.Link href="#action1">Home</Nav.Link>
+            <Link to="/">Home</Link>
             <Link to="/login">Login</Link>
           </Navbar.Collapse>
         </Container>
