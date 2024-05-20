@@ -4,6 +4,7 @@ import NavBar from './components/NavBar.jsx';
 import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
 import RecipeDetails from './components/RecipeDetails.jsx';
 import './App.css'
 
