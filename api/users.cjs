@@ -1,7 +1,7 @@
 //imports
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { getUserInfo, updateRatingsAndReviews, viewAllRatingAndReviews, deleteRatingAndReview, saveARecipe, viewAllSavedRecipes, deleteASavedRecipe, checkSingleSavedRecipe, createRatingAndReviewForRecipe } = require("../db/index.cjs");
+const { getUserInfo, updateUserPreferences, updateRatingsAndReviews, viewAllRatingAndReviews, deleteRatingAndReview, saveARecipe, viewAllSavedRecipes, deleteASavedRecipe, checkSingleSavedRecipe, createRatingAndReviewForRecipe } = require("../db/index.cjs");
 const { verifyToken } = require("../auth/middleware.cjs");
 const express = require("express");
 const usersRouter = express.Router();
@@ -24,6 +24,22 @@ usersRouter.get("/profile", verifyToken, async (req, res) => {
   } catch (error) {
     console.log("Error caught when fetching profile");
     res.status(500).send({message: "Internal server error"});
+  }
+});
+
+//PUT: update preferences
+usersRouter.put("/preferences", verifyToken, async (req, res) => {
+  try{
+    const id = req.user.id;
+    const newPreferences = req.body;
+
+    const updatedPreferences = await updateUserPreferences(id, newPreferences);
+    if(!updatedPreferences){
+      return res.status(404).send({message: "Preferences not found"});
+    }
+    res.send(updatedPreferences);
+  }catch(error){
+    console.log("Error caught when updating preferences", error);
   }
 });
 
