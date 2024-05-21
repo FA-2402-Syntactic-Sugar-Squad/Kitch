@@ -18,7 +18,8 @@ const MyProfile = ({ token }) => {
         const userProfileResult = await response.json();
         setUserProfile(userProfileResult);
         setSavedRecipes(userProfileResult.users_recipes);
-        setPreferences(userProfileResult.preferences[0]);
+        const filteredPreferences = (({ id, userId, ...rest }) => rest)(userProfileResult.preferences[0]);
+        setPreferences(filteredPreferences);
       } catch (error) {
         console.log("Error caught when fetching users profile from api", error);
       }
@@ -40,9 +41,11 @@ const MyProfile = ({ token }) => {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
+        body: JSON.stringify(preferences) //only send preferences
       });
       const updatedPreferences = await response.json();
-      setPreferences(updatedPreferences);
+      const filteredPreferences = (({ id, userId, ...rest }) => rest)(updatedPreferences);
+      setPreferences(filteredPreferences);
     } catch (error) {
       console.log("Error caught when fetching and updating preferences", error);
     }
@@ -54,7 +57,7 @@ const MyProfile = ({ token }) => {
         <>
           <h2>My Profile</h2>
           <div>
-            <h3>Welcome {userProfile.username}</h3>
+            <h4>Welcome {userProfile.username}</h4>
             <p>Email: {userProfile.email}</p>
           </div>
           <div>
@@ -82,8 +85,10 @@ const MyProfile = ({ token }) => {
           </div>
         </>
       ) :
-        <p>Loading...</p>}
+        <p>Loading...</p>
+      }
     </>
   )
 }
+
 export default MyProfile;
