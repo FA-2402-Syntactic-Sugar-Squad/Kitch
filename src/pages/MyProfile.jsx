@@ -1,17 +1,8 @@
-<<<<<<< Updated upstream
-const MyProfile = () => {
-  return (
-    <>
-      <h3>My Profile</h3>
-      {/*Display users profile - function can be found in components - users.jsx */}
-=======
 import { useEffect, useState } from "react";
-
 const MyProfile = ({ token }) => {
   const [userProfile, setUserProfile] = useState("");
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [preferences, setPreferences] = useState({});
-
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
@@ -32,15 +23,13 @@ const MyProfile = ({ token }) => {
     }
     fetchProfile();
   }, []);
-
   const handlePreferenceChange = (event) => {
     const { name, checked } = event.target;
-    setPreferences(prev => ({ ...prev, [name]: checked}));
+    setPreferences(prev => ({ ...prev, [name]: checked }));
   }
-
-  const savePreferences = async() => {
+  const savePreferences = async () => {
     const token = localStorage.getItem("token");
-    try{
+    try {
       const response = await fetch(`/api/users/preferences`, {
         method: "PUT",
         headers: {
@@ -50,11 +39,10 @@ const MyProfile = ({ token }) => {
       });
       const updatedPreferences = await response.json();
       setPreferences(updatedPreferences);
-    } catch(error){
+    } catch (error) {
       console.log("Error caught when fetching and updating preferences", error);
     }
   }
-
   return (
     <>
       {token ? (
@@ -70,30 +58,27 @@ const MyProfile = ({ token }) => {
           </div>
           <div>
             <h3>Dietary Selection</h3>
-          <form>
-            {Object.keys(preferences).map(pref => (
-              <div key={pref}>
-                <label>
-                  <input 
-                    type="checkbox"
-                    name={pref}
-                    checked={preferences[pref]}
-                    onChange={handlePreferenceChange}
-                  />
-                  {pref.replace(/([A-Z])/g, '$1').trim()}
-                </label>
-              </div>
-            ))}
-            <button type="button" onClick={savePreferences}>Save Preferences</button>    
-          </form>
+            <form>
+              {Object.keys(preferences).map(pref => (
+                <div key={pref}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name={pref}
+                      checked={preferences[pref]}
+                      onChange={handlePreferenceChange}
+                    />
+                    {pref.replace(/([A-Z])/g, '$1').trim()}
+                  </label>
+                </div>
+              ))}
+              <button type="button" onClick={savePreferences}>Save Preferences</button>
+            </form>
           </div>
-          
         </>
       ) :
         <p>Loading...</p>}
->>>>>>> Stashed changes
     </>
   )
 }
-
 export default MyProfile;

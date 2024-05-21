@@ -13,9 +13,13 @@ const getUserInfo = async(id) => {
   try{
     const userInfo = await prisma.users.findUnique({
       where: { id : id },
-      include: {
+      select: {
+        id: true,
+        username: true,
+        email: true,
         users_recipes: true,
         preferences: true,
+        isadmin: true,
       },
     });
     return userInfo;
@@ -24,9 +28,21 @@ const getUserInfo = async(id) => {
   }
 };
 
+//user: update preferences
+const updateUserPreferences = async(id, newPreferences) => {
+  try{
+    const updatedPreferences = await prisma.preferences.update({
+      where: {userId: id},
+      data: newPreferences,
+    });
+    return updatedPreferences;
+  }catch(error){
+    console.log("Error caught when trying to update user preferences", error);
+  }
+}
+
 //user: post ratings and reviews on saved recipes
 const updateRatingsAndReviews = async(id, rating, reviewMsg) => {
-  //limit for rating (?) - could be a front end limitation
   try{
     const updatedRatingAndReview = await prisma.users_recipes.update({
       where: {
@@ -162,6 +178,7 @@ const deleteASavedRecipe = async (id) => {
 
 module.exports = { 
   getUserInfo,
+  updateUserPreferences,
   updateRatingsAndReviews,
   createRatingAndReviewForRecipe,
   viewAllRatingAndReviews,
