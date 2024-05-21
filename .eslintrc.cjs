@@ -1,21 +1,44 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: {
+    browser: true,
+    node: true,
+    es6: true,
+  },
   extends: [
     'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'plugin:react/jsx-runtime',
-    'plugin:react-hooks/recommended',
+    'plugin:prettier/recommended',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
-  rules: {
-    'react/jsx-no-target-blank': 'off',
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
+  parserOptions: {
+    ecmaVersion: 2021,
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
-}
+  plugins: [
+    '@typescript-eslint',
+    'react',
+    'prettier',
+  ],
+  rules: {
+    'prettier/prettier': 'error',
+    'no-unused-vars': 'warn',
+    'no-console': 'warn',
+    'eqeqeq': 'error',
+    'curly': 'error',
+    'semi': ['error', 'always'],
+    'quotes': ['error', 'single'],
+    'indent': ['error', 2],
+    'comma-dangle': ['error', 'always-multiline'],
+    'react/prop-types': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
+};
