@@ -1,6 +1,6 @@
 const express = require("express");
-const prisma = require("./db");
-
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 const recipeByIngredientRouter = express.Router();
 
 // GET /recipes/byIngredient/:ingredientId - Get recipes by ingredientId

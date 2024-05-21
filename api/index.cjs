@@ -19,7 +19,7 @@ const ingredientsRouter = require("./ingredients.cjs");
 apiRouter.use("/ingredients", ingredientsRouter);
 
 //write route for recipies by ingredient id
-const recipeByIngredientRouter = require("./recipeByIngredient.cjs");
+const recipeByIngredientRouter = require("./recipesByIngredients.cjs");
 apiRouter.use("/recipes/byIngredient", recipeByIngredientRouter);
 
 //export
