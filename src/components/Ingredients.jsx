@@ -49,6 +49,7 @@ const Ingredients = () => {
      
       const response = await fetch(`/api/recipes/byIngredient/${selectedIngredientIds}`);
       
+      //can get recipesIds here for future use
       
       const recipes = await response.json();
       
