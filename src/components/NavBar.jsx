@@ -51,7 +51,7 @@ function NavBar({ token, setToken }) {
 
             <Link to="/">Home</Link>
             <NavDropdown title="Account" id="navbarScrollingDropdown" >
-              <NavDropdown.Item href="#action3">My Profile</NavDropdown.Item>
+              <NavDropdown.Item href="/myProfile">My Profile</NavDropdown.Item>
               <NavDropdown.Item href="#action4">
                 Saved Recipes
               </NavDropdown.Item>
