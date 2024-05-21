@@ -29,17 +29,39 @@ const getUserInfo = async(id) => {
 };
 
 //user: update preferences
-const updateUserPreferences = async(id, newPreferences) => {
+const updateUserPreferences = async(userId, newPreferences) => {
   try{
+    const preferenceRecord = await prisma.preferences.findFirst({
+      where: {
+        userId: userId,
+      },
+    });
+
+    if(!preferenceRecord){
+      throw new Error("Preferences not found");
+    }
+
     const updatedPreferences = await prisma.preferences.update({
-      where: {userId: id},
+      where: { id: preferenceRecord.id },
       data: newPreferences,
+      select: {
+        glutenFree: true,
+        ketogenic: true,
+        lactoVegetarian: true,
+        ovoVegetarian: true,
+        vegan: true,
+        pescetarian: true,
+        paleo: true,
+        primal: true,
+        lowFODMAP: true,
+        whole30: true,
+      },
     });
     return updatedPreferences;
   }catch(error){
     console.log("Error caught when trying to update user preferences", error);
   }
-}
+};
 
 //user: post ratings and reviews on saved recipes
 const updateRatingsAndReviews = async(id, rating, reviewMsg) => {
