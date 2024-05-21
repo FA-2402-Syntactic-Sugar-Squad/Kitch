@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+
 const MyProfile = ({ token }) => {
   const [userProfile, setUserProfile] = useState("");
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [preferences, setPreferences] = useState({});
+
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
@@ -23,10 +25,12 @@ const MyProfile = ({ token }) => {
     }
     fetchProfile();
   }, []);
+
   const handlePreferenceChange = (event) => {
     const { name, checked } = event.target;
     setPreferences(prev => ({ ...prev, [name]: checked }));
   }
+
   const savePreferences = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -43,6 +47,7 @@ const MyProfile = ({ token }) => {
       console.log("Error caught when fetching and updating preferences", error);
     }
   }
+
   return (
     <>
       {token ? (
