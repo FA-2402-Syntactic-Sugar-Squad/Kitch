@@ -5,6 +5,7 @@ import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import RecipeDetails from './components/RecipeDetails.jsx';
+import Ingredients from './components/Ingredients.jsx';
 import './App.css'
 
 function App() {
@@ -28,6 +29,8 @@ function App() {
         <Route path="/login" element={<Login token={token} setToken={setToken}/>}/>
         <Route path="/recipes/:id" element={<RecipeDetails token={token}/>} />
       </Routes>
+
+      <Ingredients/>
     </>
   )
 }
