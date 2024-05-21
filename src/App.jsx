@@ -4,9 +4,9 @@ import NavBar from './components/NavBar.jsx';
 import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
 import RecipeDetails from './components/RecipeDetails.jsx';
 import './App.css'
+import Ingredients from './components/Ingredients.jsx';
 
 function App() {
   const [token, setToken] = useState("");
@@ -29,6 +29,7 @@ function App() {
         <Route path="/login" element={<Login token={token} setToken={setToken}/>}/>
         <Route path="/recipes/:id" element={<RecipeDetails token={token}/>} />
       </Routes>
+      <Ingredients/>
     </>
   )
 }
