@@ -5,6 +5,7 @@ import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import RecipeDetails from './components/RecipeDetails.jsx';
+import Ingredients from './components/Ingredients.jsx';
 import './App.css'
 import MyProfile from './pages/MyProfile.jsx';
 
@@ -30,6 +31,8 @@ function App() {
         <Route path="/recipes/:id" element={<RecipeDetails token={token}/>} />
         <Route path="/myProfile" element={<MyProfile token={token}/>} />
       </Routes>
+
+      <Ingredients/>
     </>
   )
 }

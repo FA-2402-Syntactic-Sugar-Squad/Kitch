@@ -30,13 +30,10 @@ usersRouter.get("/profile", verifyToken, async (req, res) => {
 //PUT: update preferences
 usersRouter.put("/preferences", verifyToken, async (req, res) => {
   try{
-    const id = req.user.id;
+    const userId = req.user.id;
     const newPreferences = req.body;
 
-    const updatedPreferences = await updateUserPreferences(id, newPreferences);
-    if(!updatedPreferences){
-      return res.status(404).send({message: "Preferences not found"});
-    }
+    const updatedPreferences = await updateUserPreferences(userId, newPreferences);
     res.send(updatedPreferences);
   }catch(error){
     console.log("Error caught when updating preferences", error);

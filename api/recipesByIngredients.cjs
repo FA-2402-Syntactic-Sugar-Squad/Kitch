@@ -9,11 +9,11 @@ recipeByIngredientRouter.get("/:ingredientId", async (req, res, next) => {
     const { ingredientId } = req.params;
 
     // Query the recipes_ingredients table to find recipes by ingredientId
-    const recipesWithIngredient = await prisma.recipe.findMany({
+    const recipesWithIngredient = await prisma.recipes.findMany({
       where: {
-        ingredients: {
+        recipes_ingredients: {
           some: {
-            ingredientId: parseInt(ingredientId)
+            ingredientsId: parseInt(ingredientId)
           }
         }
       }
