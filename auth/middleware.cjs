@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 require("dotenv").config();
 
 // Middleware to verify JWT token for the orders
@@ -30,4 +30,26 @@ const requireAdmin = (req, res, next) => {
   else res.status(403).json({ message: 'Not authorized for Admin priviledges' });
 };
 
-module.exports = { verifyToken, requireAdmin }
+// Middleware to verify admin
+const verifyAdmin = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded.isAdmin) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    req.user = decoded; // Attach decoded user information to the request
+    next();
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+};
+
+
+module.exports = { verifyToken, requireAdmin, verifyAdmin }
