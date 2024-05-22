@@ -4,9 +4,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { verifyToken } = require("./middleware.cjs");
-
-const signToken = ({ id, isAdmin }) => jwt.sign({ id, isAdmin }, process.env.JWT_SECRET);
+const { verifyToken } = require("./middleware.cjs")
+const { signToken } = require("../utils/token.cjs");
 
 // Register a new user account
 router.post("/register", async (req, res, next) => {
@@ -38,6 +37,7 @@ router.post("/login", async (req, res, next) => {
         email: req.body.email
       },
     });
+    console.log("hello, user found", user)
     const matchPassword = await bcrypt.compare(req.body.password, user?.password);
 
     if (!user || !matchPassword) {
