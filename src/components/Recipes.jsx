@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
 
-const Recipes = () => {
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+
+const Recipes = ({ token, onRecipeSelect }) => {
   const [recipes, setRecipes] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllRecipes = async () => {
@@ -15,13 +16,14 @@ const Recipes = () => {
       } catch (error) {
         console.error("Error when trying to fetch all recipes", error);
       }
-    }
-    fetchAllRecipes();
-  }, []);
+     }
+     fetchAllRecipes();
+    }, []);
 
-  const handleClick = (recipeId) => {
-    navigate(`/recipes/${recipeId}`);
-  }
+  const handleClick = (recipe) => {
+    onRecipeSelect(recipe);
+  };
+
   if (!recipes) {
     return <h2>Loading..</h2>
   }
@@ -30,16 +32,38 @@ const Recipes = () => {
     <>
       <h3>Recipes</h3>
       {/* DISPLAY ALL RECIPES ON Home Page */}
-      {recipes.map((curRecipe) => {
-        return (
-          <div key={curRecipe.id}>
-            <h6>{curRecipe.title}</h6>
-            <img src={curRecipe.imageurl} />
-            <p>{curRecipe.diets}</p>
-            <button onClick={() => handleClick(curRecipe.id)}>See Details</button>
-          </div>
-        )
-      })}
+      {token ? (
+        <>
+          {recipes.map((curRecipe) => {
+            return (
+              <Card style={{ width: '18rem' }} key={curRecipe.id}>
+                <Card.Img variant="top" src={curRecipe.imageurl} />
+                <Card.Body>
+                  <Card.Title>{curRecipe.title}</Card.Title>
+                  <Button variant="primary" onClick={() => handleClick(curRecipe)}>See Recipe</Button>
+                </Card.Body>
+              </Card >
+            )
+          })}
+        </>
+      ) : (
+        <>
+          {recipes.map((curRecipe) => {
+            return (
+              <Card style={{ width: '18rem' }} key={curRecipe.id}>
+                <Card.Img variant="top" src={curRecipe.imageurl} />
+                <Card.Body>
+                  <Card.Title>{curRecipe.title}</Card.Title>
+                  <Card.Text>
+                    Must be logged in to see details.
+                  </Card.Text>
+                  <Button variant="primary">See Recipe</Button>
+                </Card.Body>
+              </Card >
+            )
+          })}
+        </>
+      )}
     </>
   )
 }
