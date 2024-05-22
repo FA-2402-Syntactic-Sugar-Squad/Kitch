@@ -1,12 +1,10 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model recipes_ingredients {
   id            Int         @id @default(autoincrement())
   recipeId      Int
@@ -14,14 +12,12 @@ model recipes_ingredients {
   recipes       recipes     @relation(fields: [recipeId], references: [id])
   ingredients   ingredients @relation(fields: [ingredientsId], references: [id])
 }
-
 model ingredients {
   id                  Int                   @id @default(autoincrement())
   name                String
   category            String
   recipes_ingredients recipes_ingredients[]
 }
-
 model users {
   id            Int             @id @default(autoincrement())
   username      String
@@ -31,7 +27,6 @@ model users {
   preferences   preferences[]
   isadmin       Boolean
 }
-
 model users_recipes {
   id        Int     @id @default(autoincrement())
   userId    Int
@@ -41,7 +36,6 @@ model users_recipes {
   users     users   @relation(fields: [userId], references: [id])
   recipes   recipes @relation(fields: [recipeId], references: [id])
 }
-
 model preferences {
   id              Int      @id @default(autoincrement())
   userId          Int
@@ -59,7 +53,6 @@ model preferences {
   recipes         recipes? @relation(fields: [recipesId], references: [id])
   recipesId       Int?
 }
-
 model recipes {
   id                  Int                   @id @default(autoincrement())
   title               String
@@ -70,7 +63,6 @@ model recipes {
   recipes_ingredients recipes_ingredients[]
   ratingsAndReviews   ratingsAndReviews[]
 }
-
 model ratingsAndReviews {
   id        Int     @id @default(autoincrement())
   recipeId  Int

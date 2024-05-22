@@ -8,6 +8,7 @@ import RecipeDetails from './components/RecipeDetails.jsx';
 import Ingredients from './components/Ingredients.jsx';
 import './App.css'
 import MyProfile from './pages/MyProfile.jsx';
+import Searchbar from './components/Searchbar.jsx';
 
 function App() {
   const [token, setToken] = useState("");
@@ -31,8 +32,9 @@ function App() {
         <Route path="/recipes/:id" element={<RecipeDetails token={token}/>} />
         <Route path="/myProfile" element={<MyProfile token={token}/>} />
       </Routes>
+      
 
-      <Ingredients/>
+      <Searchbar/>
     </>
   )
 }
