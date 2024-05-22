@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route } from "react-router-dom";
+
 import NavBar from './components/NavBar.jsx';
 import Home from './pages/Home.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
-import RecipeDetails from './components/RecipeDetails.jsx';
-import Ingredients from './components/Ingredients.jsx';
-import './App.css'
 import MyProfile from './pages/MyProfile.jsx';
+
+import './App.css';
 
 function App() {
   const [token, setToken] = useState("");
@@ -27,12 +27,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Home token={token}/>}/>
         <Route path="/register" element={<Register token={token} setToken={setToken}/>}/>
-        <Route path="/login" element={<Login token={token} setToken={setToken}/>}/>
-        <Route path="/recipes/:id" element={<RecipeDetails token={token}/>} />
+        <Route path="/login" element={<Login token={token} setToken={setToken}/>}/>    
         <Route path="/myProfile" element={<MyProfile token={token}/>} />
       </Routes>
-
-      <Ingredients/>
     </>
   )
 }
