@@ -49,7 +49,7 @@ const AddReview = ({ recipeId, onReviewAdded }) => {
 
   return (
     <div>
-      <h3>Add your review</h3>
+      <h5>Add your review</h5>
       <form onSubmit={handleSubmit}>
         <label>
           Rating:

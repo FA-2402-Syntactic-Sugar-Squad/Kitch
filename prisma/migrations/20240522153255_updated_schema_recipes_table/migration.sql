@@ -1,0 +1,12 @@
+-- AlterTable
+ALTER TABLE "recipes" ADD COLUMN     "glutenFree" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "imageurl" TEXT,
+ADD COLUMN     "ketogenic" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "lactoVegetarian" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "lowFODMAP" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "ovoVegetarian" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "paleo" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "pescetarian" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "primal" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "vegan" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "whole30" BOOLEAN NOT NULL DEFAULT false;
