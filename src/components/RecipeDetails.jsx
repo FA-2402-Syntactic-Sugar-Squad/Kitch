@@ -1,30 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
 import AddReview from './AddReview.jsx';
 
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
 const RecipeDetails = ({ token, recipe }) => {
-  // const[recipeDetails, setRecipeDetails] = useState("");
-  // const navigate = useNavigate();
-  // const params = useParams();
-  // const recipeId = parseInt(params.id);
-
-  // useEffect(() => {
-  //   const fetchDetails = async () => {
-  //     try{
-  //       const response = await fetch(`/api/recipes/${recipeId}`);
-  //       const allRecipeDetails = await response.json();
-  //       setRecipeDetails(allRecipeDetails);
-  //     }catch(error){
-  //       console.error("Error when trying to fetch recipe details", error);
-  //     }
-  //   }
-  //   fetchDetails();
-  // }, [])
   if (!recipe) {
     return <p>Select a recipe to see details.</p>
   }
