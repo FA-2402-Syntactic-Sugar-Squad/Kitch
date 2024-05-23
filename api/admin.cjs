@@ -62,7 +62,6 @@ reviewsRouter.delete('/review/:id', verifyAdmin, async (req, res, next) => {
   }
 });
 
-module.exports = reviewsRouter;
 
 // POST /ingredients - Create a new ingredient
 ingredientsRouter.post("/", async (req, res, next) => {
@@ -108,4 +107,4 @@ ingredientsRouter.delete("/:id", async (req, res, next) => {
   }
 });
 
-module.exports = ingredientsRouter;
+module.exports = reviewsRouter;
