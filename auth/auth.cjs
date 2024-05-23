@@ -5,7 +5,6 @@ const router = require("express").Router();
 
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const jwtDecode = require('jwt-decode');
 const bcrypt = require('bcrypt');
 
 const { verifyToken } = require("./middleware.cjs")
