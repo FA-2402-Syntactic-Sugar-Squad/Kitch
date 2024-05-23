@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
-const Recipes = ({ token, onRecipeSelect }) => {
+const Recipes = ({ token, onRecipeSelect,searchResults }) => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
@@ -24,6 +24,8 @@ const Recipes = ({ token, onRecipeSelect }) => {
     onRecipeSelect(recipe);
   };
 
+  const recipesToDisplay = searchResults.length > 0 ? searchResults : recipes;
+
   if (!recipes) {
     return <h2>Loading..</h2>
   }
@@ -34,7 +36,7 @@ const Recipes = ({ token, onRecipeSelect }) => {
       {/* DISPLAY ALL RECIPES ON Home Page */}
       {token ? (
         <>
-          {recipes.map((curRecipe) => {
+          {recipesToDisplay.map((curRecipe) => {
             return (
               <Card style={{ width: '18rem' }} key={curRecipe.id}>
                 <Card.Img variant="top" src={curRecipe.imageurl} />
@@ -48,7 +50,7 @@ const Recipes = ({ token, onRecipeSelect }) => {
         </>
       ) : (
         <>
-          {recipes.map((curRecipe) => {
+          {recipesToDisplay.map((curRecipe) => {
             return (
               <Card style={{ width: '18rem' }} key={curRecipe.id}>
                 <Card.Img variant="top" src={curRecipe.imageurl} />

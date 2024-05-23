@@ -6,7 +6,7 @@ import RecipeDetails from "../components/RecipeDetails";
 
 import Stack from 'react-bootstrap/Stack';
 
-const Home = ({ token }) => {
+const Home = ({ token,searchResults }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   const handleSelectedRecipe = (recipe) => {
@@ -27,7 +27,7 @@ const Home = ({ token }) => {
           )}
           </div>
         <div className="vr" />
-        <div className="p-2"><Recipes token={token} onRecipeSelect={handleSelectedRecipe}/></div>
+        <div className="p-2"><Recipes token={token} onRecipeSelect={handleSelectedRecipe} searchResults={searchResults}/></div>
       </Stack>
     </>
   )
