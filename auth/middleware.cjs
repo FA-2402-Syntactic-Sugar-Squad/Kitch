@@ -22,12 +22,12 @@ const verifyToken = (req, res, next) => {
 };
 
 /** 
- * Checks for user w/ admin priviledges
+ * Checks for user w/ admin privileges
  * pair w/ verifyToken to achieve intended security benefits 
  * */
 const requireAdmin = (req, res, next) => {
   if (req.user?.isAdmin) next();
-  else res.status(403).json({ message: 'Not authorized for Admin priviledges' });
+  else res.status(403).json({ message: 'Not authorized for Admin privileges' });
 };
 
 // Middleware to verify admin
@@ -51,5 +51,8 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
-
-module.exports = { verifyToken, requireAdmin, verifyAdmin }
+module.exports = { 
+  verifyToken, 
+  requireAdmin, 
+  verifyAdmin 
+}

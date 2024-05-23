@@ -5,6 +5,9 @@ apiRouter.get("/", (req, res) => {
   res.send("This is the root for /api")
 });
 
+//write the route for admin
+const adminPrivRouter = require("./admin.cjs");
+apiRouter.use("/admin", adminPrivRouter);
 
 //write route for recipes
 const recipesRouter = require("./recipes.cjs");
@@ -18,7 +21,7 @@ apiRouter.use("/users", usersRouter);
 const ingredientsRouter = require("./ingredients.cjs");
 apiRouter.use("/ingredients", ingredientsRouter);
 
-//write route for recipies by ingredient id
+//write route for recipes by ingredient id
 const recipeByIngredientRouter = require("./recipesByIngredients.cjs");
 apiRouter.use("/recipes/byIngredient", recipeByIngredientRouter);
 

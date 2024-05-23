@@ -1,14 +1,14 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const express = require('express');
-const reviewsRouter = express.Router();
+const adminPrivRouter = express.Router();
 const verifyAdmin = require('./../auth/middleware.cjs');
 
 // // Middleware to verify admin
 
 
 // Get all ratings and reviews
-reviewsRouter.get('/', async (req, res, next) => {
+adminPrivRouter.get('/', async (req, res, next) => {
   try {
     const ratings = await prisma.rating.findMany();
     const reviews = await prisma.review.findMany();
@@ -20,7 +20,7 @@ reviewsRouter.get('/', async (req, res, next) => {
 });
 
 // Moderate (update) a review
-reviewsRouter.put('/review/:id', verifyAdmin, async (req, res, next) => {
+adminPrivRouter.put('/review/:id', verifyAdmin, async (req, res, next) => {
   try {
     const reviewId = parseInt(req.params.id);
     const updatedReview = await prisma.review.update({
@@ -35,7 +35,7 @@ reviewsRouter.put('/review/:id', verifyAdmin, async (req, res, next) => {
 });
 
 // Delete a rating
-reviewsRouter.delete('/rating/:id', verifyAdmin, async (req, res, next) => {
+adminPrivRouter.delete('/rating/:id', verifyAdmin, async (req, res, next) => {
   try {
     const ratingId = parseInt(req.params.id);
     await prisma.rating.delete({
@@ -49,7 +49,7 @@ reviewsRouter.delete('/rating/:id', verifyAdmin, async (req, res, next) => {
 });
 
 // Delete a review
-reviewsRouter.delete('/review/:id', verifyAdmin, async (req, res, next) => {
+adminPrivRouter.delete('/review/:id', verifyAdmin, async (req, res, next) => {
   try {
     const reviewId = parseInt(req.params.id);
     await prisma.review.delete({
@@ -62,4 +62,4 @@ reviewsRouter.delete('/review/:id', verifyAdmin, async (req, res, next) => {
   }
 });
 
-module.exports = reviewsRouter;
+module.exports = adminPrivRouter;
