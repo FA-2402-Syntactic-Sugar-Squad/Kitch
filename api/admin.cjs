@@ -1,18 +1,24 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+
 const express = require('express');
 const adminPrivRouter = express.Router();
-const verifyAdmin = require('./../auth/middleware.cjs');
 
-// // Middleware to verify admin
+const { verifyAdmin, verifyToken, requireAdmin } = require('./../auth/middleware.cjs');
+const { adminPrivRatingsAndReviews, adminPrivDeleteReviewMsg } = require("../db/index.cjs");
 
+adminPrivRouter.use(verifyToken);
 
-// Get all ratings and reviews
-adminPrivRouter.get('/', async (req, res, next) => {
+//PATH: api/admin
+
+// GET: all ratings and reviews
+adminPrivRouter.get('/', requireAdmin, async (req, res, next) => {
   try {
-    const ratings = await prisma.rating.findMany();
-    const reviews = await prisma.review.findMany();
-    res.json({ ratings, reviews });
+    const fetchAllRatingsAndReviews = await adminPrivRatingsAndReviews();
+    if(!fetchAllRatingsAndReviews){
+      return res.status(404).send({ message: "Ratings or reviews not found" });
+    }
+    res.send(fetchAllRatingsAndReviews);
   } catch (error) {
     console.error('Error getting ratings and reviews:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -22,42 +28,55 @@ adminPrivRouter.get('/', async (req, res, next) => {
 // Moderate (update) a review
 adminPrivRouter.put('/review/:id', verifyAdmin, async (req, res, next) => {
   try {
-    const reviewId = parseInt(req.params.id);
-    const updatedReview = await prisma.review.update({
-      where: { id: reviewId },
-      data: req.body,
-    });
-    res.json(updatedReview);
+    const id = parseInt(req.params.id);
+    const updatedReviewMsg = await adminPrivDeleteReviewMsg(id);
+    res.json(updatedReviewMsg);
   } catch (error) {
     console.error('Error updating review:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Delete a rating
-adminPrivRouter.delete('/rating/:id', verifyAdmin, async (req, res, next) => {
+// POST /ingredients - Create a new ingredient
+adminPrivRouter.post("/", verifyAdmin, async (req, res, next) => {
   try {
-    const ratingId = parseInt(req.params.id);
-    await prisma.rating.delete({
-      where: { id: ratingId },
+    const { name, description, category } = req.body;
+    const ingredient = await prisma.ingredients.create({
+      data: { name, description, category }
     });
-    res.status(204).send();
+    res.status(201).json(ingredient);
   } catch (error) {
-    console.error('Error deleting rating:', error);
+    console.error('Error when creating ingredient:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Delete a review
-adminPrivRouter.delete('/review/:id', verifyAdmin, async (req, res, next) => {
+// PUT /ingredients/:id - Update an existing ingredient by ID
+adminPrivRouter.put("/ingredients/:id", verifyAdmin, async (req, res, next) => {
   try {
-    const reviewId = parseInt(req.params.id);
-    await prisma.review.delete({
-      where: { id: reviewId },
+    const { id } = req.params;
+    const { name, description, category } = req.body;
+    const updatedIngredient = await prisma.ingredients.update({
+      where: { id: parseInt(id) },
+      data: { name, description, category }
     });
-    res.status(204).send();
+    res.json(updatedIngredient);
   } catch (error) {
-    console.error('Error deleting review:', error);
+    console.error('Error when updating ingredient:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// DELETE /ingredients/:id - Delete an ingredient by ID
+adminPrivRouter.delete("/ingredients/:id", verifyAdmin, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await prisma.ingredients.delete({
+      where: { id: parseInt(id) }
+    });
+    res.json({ message: 'Ingredient deleted successfully' });
+  } catch (error) {
+    console.error('Error when deleting ingredient:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

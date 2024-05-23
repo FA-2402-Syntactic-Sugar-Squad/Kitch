@@ -22,11 +22,11 @@ const verifyToken = (req, res, next) => {
 };
 
 /** 
- * Checks for user w/ admin privileges
- * pair w/ verifyToken to achieve intended security benefits 
- * */
+ Checks for user w/ admin privileges pair w/ 
+ verifyToken to achieve intended security benefits 
+**/
 const requireAdmin = (req, res, next) => {
-  if (req.user?.isAdmin) next();
+  if (req.user?.isadmin) next();
   else res.status(403).json({ message: 'Not authorized for Admin privileges' });
 };
 
@@ -40,7 +40,7 @@ const verifyAdmin = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded.isAdmin) {
+    if (!decoded.isadmin) {
       return res.status(403).json({ error: 'Forbidden' });
     }
     req.user = decoded; // Attach decoded user information to the request
