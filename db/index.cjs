@@ -2,12 +2,38 @@ require("dotenv").config();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-//recipes: get all recipes
+// *** ATTN: ADMIN FUNCTIONS START *** \\
+//admin: get all ratings and reviews
+const adminPrivRatingsAndReviews = async () => {
+  try{
+    const allUserRatingsAndReviews = await prisma.ratingsAndReviews.findMany({
+      include: {
+        recipe: true, //including related recipe data
+      }
+    });
+    return allUserRatingsAndReviews;
+  } catch(error){
+    console.log("Error caught when fetching everyone's rating and reviews:", error);
+  }
+};
 
-//recipes: find single recipe
+//admin: delete reviews
+const adminPrivDeleteReviewMsg = async (id) => {
+  try{
+    const updatedRatingAndReview = await prisma.ratingsAndReviews.update({
+      where: {id: id},
+      data: {reviewMsg: ""}, //could not update to null since the field is not nullable
+    });
+    return updatedRatingAndReview;
+  }catch(error){
+    console.log("Error deleting review message:", error);
+  }
+};
 
-//recipes: find review and/or rating under specific rating
+// *** ATTN: ADMIN FUNCTIONS END *** \\
 
+
+// *** ATTN: USERS FUNCTIONS START *** \\
 //user: get profile
 const getUserInfo = async(id) => {
   try{
@@ -197,8 +223,12 @@ const deleteASavedRecipe = async (id) => {
     console.log("Error caught when deleting a saved recipe", error);
   }
 };
+// *** ATTN: USERS FUNCTIONS END *** \\
+
 
 module.exports = { 
+  adminPrivRatingsAndReviews,
+  adminPrivDeleteReviewMsg,
   getUserInfo,
   updateUserPreferences,
   updateRatingsAndReviews,
