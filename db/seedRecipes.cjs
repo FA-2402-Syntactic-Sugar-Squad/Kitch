@@ -11,6 +11,7 @@ async function seedDatabase(numRecipes) {
     const recipes = response.data.recipes;
 
     for (const recipe of recipes) {
+      try {
       const {
         id: recipeId,
         title,
@@ -77,6 +78,9 @@ async function seedDatabase(numRecipes) {
       }
 
       console.log(`Recipe "${title}" seeded successfully!`);
+    } catch (error) {
+      console.error(`Error seeding recipe "${recipe.title}":`, error);
+    }
     }
 
     console.log("Database seeding completed!");
@@ -99,4 +103,4 @@ function generateInstructions(analyzedInstructions) {
   return instructions;
 }
 
-seedDatabase(20);
+seedDatabase(1);
