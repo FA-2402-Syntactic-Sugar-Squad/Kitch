@@ -16,8 +16,7 @@ const signToken = (user) => {
       email: user.email,
       isadmin: user.isadmin, 
     }, 
-    process.env.JWT_SECRET, 
-    { expiresIn: "1h" }
+    process.env.JWT_SECRET,
   );
 };
 

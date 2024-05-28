@@ -30,6 +30,30 @@ const adminPrivDeleteReviewMsg = async (id) => {
   }
 };
 
+const adminPrivUpdateRecipeImageUrl = async (recipeId, newImageUrl) => {
+  try{
+    const recipe = await prisma.recipes.findUnique({
+      where: {
+        id: recipeId,
+      },
+    });
+    if(!recipe){
+      throw new Error(`Recipe with ID ${recipeId} not found`);
+    }
+    const updatedRecipeImage = await prisma.recipes.update({
+      where: {
+        id: recipeId,
+      },
+      data: {
+        imageurl: newImageUrl,
+      },
+    });
+    console.log(`Successfully updated image URL for recipe with ID ${recipeId}.`);
+    return updatedRecipeImage;
+  } catch(error){
+    console.log("Error caught when updating an image on recipes", error);
+  }
+};
 // *** ATTN: ADMIN FUNCTIONS END *** \\
 
 
@@ -229,6 +253,7 @@ const deleteASavedRecipe = async (id) => {
 module.exports = { 
   adminPrivRatingsAndReviews,
   adminPrivDeleteReviewMsg,
+  adminPrivUpdateRecipeImageUrl,
   getUserInfo,
   updateUserPreferences,
   updateRatingsAndReviews,
