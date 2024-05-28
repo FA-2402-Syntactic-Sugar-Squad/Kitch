@@ -5,7 +5,7 @@ const express = require('express');
 const adminPrivRouter = express.Router();
 
 const { verifyAdmin, verifyToken, requireAdmin } = require('./../auth/middleware.cjs');
-const { adminPrivRatingsAndReviews, adminPrivDeleteReviewMsg } = require("../db/index.cjs");
+const { adminPrivRatingsAndReviews, adminPrivDeleteReviewMsg, adminPrivUpdateRecipeImageUrl } = require("../db/index.cjs");
 
 adminPrivRouter.use(verifyToken);
 
@@ -30,15 +30,31 @@ adminPrivRouter.put('/review/:id', verifyAdmin, async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const updatedReviewMsg = await adminPrivDeleteReviewMsg(id);
-    res.json(updatedReviewMsg);
+    res.send(updatedReviewMsg);
   } catch (error) {
     console.error('Error updating review:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+//PUT - recipe image
+adminPrivRouter.put("/:recipeId", verifyAdmin, async (req, res) => {
+  try{
+    const recipeId = parseInt(req.params.recipeId);
+    if (isNaN(recipeId)) {
+      return res.status(400).json({ error: "Invalid recipe ID" });
+    }
+    const newImageUrl = req.body.newImageUrl;
+    
+    const updatedImg = await adminPrivUpdateRecipeImageUrl(recipeId, newImageUrl);
+    res.send(updatedImg);
+  }catch(error){
+    console.log("Error caught when updating an image on api", error);
+  }
+});
+
 // POST /ingredients - Create a new ingredient
-adminPrivRouter.post("/", verifyAdmin, async (req, res, next) => {
+adminPrivRouter.post("/", verifyAdmin, async (req, res) => {
   try {
     const { name, description, category } = req.body;
     const ingredient = await prisma.ingredients.create({
