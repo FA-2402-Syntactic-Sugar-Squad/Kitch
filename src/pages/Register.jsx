@@ -1,19 +1,9 @@
-// const Register = () => {
-//   return (
-//     <>
-//       <h3>Register</h3>
-//       {/* When new users register, we should:
-//       DISPLAY preferences (so create a route for preferences) and allow option to skip. */}
-//     </>
-//   )
-// }
-
-// export default Register;
-
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const Register = () => {
+import "../styling/Home_Register.css";
+
+const Register = ({setToken}) => {
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regUsername, setRegUsername] = useState('');
@@ -32,10 +22,8 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('submitted');
-
     try {
       const result = await fetch("auth/register", {
         method: "POST",
@@ -43,8 +31,8 @@ const Register = () => {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          username: regUsername, 
+        body: JSON.stringify({
+          username: regUsername,
           password: regPassword,
           email: regEmail,
           isadmin: false,
@@ -52,9 +40,14 @@ const Register = () => {
         }),
       });
       const json = await result.json();
-      console.log(json)
-      //not going to login page after submit
-      navigate("/Login");
+      console.log(json);
+
+      if(json.token){
+        localStorage.setItem("token", json.token);
+        setToken(json.token);
+        navigate("/");
+      };
+
     } catch (error) {
       console.log(error);
     }
@@ -69,38 +62,72 @@ const Register = () => {
 
   return (
     <>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
-        <br />
-        <input type="text" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} />
-        <br />
-
-        <label htmlFor="username">Username</label>
-        <br />
-        <input type="text" value={regUsername} onChange={(e) => setRegUsername(e.target.value)} />
-        <br />
-
-        <label htmlFor="password">Password</label>
-        <br />
-        <input type="password" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} />
-        <br />
-
-        <h3>Preferences</h3>
-        {Object.keys(preferences).map((preference) => (
-          <div key={preference}>
-            <label htmlFor={preference}>{preference}</label>
-            <input
-              type="checkbox"
-              name={preference}
-              checked={preferences[preference]}
-              onChange={handlePreferenceChange}
-            />
+      <div className="Auth-form-container">
+        <form className="Auth-form" onSubmit={handleSubmit}>
+          <div className="Auth-form-content">
+            <h3 className="Auth-form-title">Sign Up</h3>
+            <div className="text-center">
+              Already registered?{" "}
+              <Link className="link-primary" to="/login">
+                Sign In
+              </Link>
+            </div>
+            <div className="form-group mt-3">
+              <label>Username</label>
+              <input
+                type="text"
+                className="form-control mt-1"
+                placeholder="e.g Jane Doe"
+                value={regUsername}
+                onChange={(e) => setRegUsername(e.target.value)}
+              />
+            </div>
+            <div className="form-group mt-3">
+              <label>Email address</label>
+              <input
+                type="email"
+                className="form-control mt-1"
+                placeholder="Email Address"
+                value={regEmail}
+                onChange={(e) => setRegEmail(e.target.value)}
+              />
+            </div>
+            <div className="form-group mt-3">
+              <label>Password</label>
+              <input
+                type="password"
+                className="form-control mt-1"
+                placeholder="Password"
+                value={regPassword}
+                onChange={(e) => setRegPassword(e.target.value)}
+              />
+            </div>
+            <br></br>
+            <h2 className="Auth-form-title">Preferences (Optional)</h2>
+            <div>
+              {Object.keys(preferences).map((preference) => (
+                <div key={preference}>
+                  <input
+                    type="checkbox"
+                    name={preference}
+                    checked={preferences[preference]}
+                    onChange={handlePreferenceChange}
+                  />
+                  <label htmlFor={preference}>{preference}</label>
+                </div>
+              ))}
+            </div>
+            <div className="d-grid gap-2 mt-3">
+              <button type="submit" className="btn btn-primary">
+                Submit
+              </button>
+            </div>
+            <p className="text-center mt-2">
+              Forgot <a href="#">password?</a>
+            </p>
           </div>
-        ))}
-        <br />
-        <button type="submit">Submit</button>
-      </form>
+        </form>
+      </div>
     </>
   );
 };
