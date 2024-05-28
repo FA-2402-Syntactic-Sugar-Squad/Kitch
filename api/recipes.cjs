@@ -32,7 +32,11 @@ recipesRouter.get("/:recipeId", async (req, res, next) => {
 // GET all recipes 
 recipesRouter.get('/', async (req, res, next) => {
   try {
-    const recipes = await prisma.recipes.findMany();
+    const recipes = await prisma.recipes.findMany({
+      include: {
+        ratingsAndReviews: true
+      }
+  });
     res.json(recipes);
   } catch (error) {
     console.error('Error when getting recipes:', error);

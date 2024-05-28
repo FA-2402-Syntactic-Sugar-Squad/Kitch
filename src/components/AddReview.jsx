@@ -19,7 +19,7 @@ const AddReview = ({ recipeId, onReviewAdded }) => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `/api/users/recipes/631741/ratings-reviews`,
+        `/api/users/recipes/${recipeId}/ratings-reviews`,
         {
           method: "POST",
           headers: {
@@ -40,7 +40,7 @@ const AddReview = ({ recipeId, onReviewAdded }) => {
       setReviewData({
         rating: 0,
         reviewMsg: "",
-        recipeId: "631741",
+        recipeId: recipeId,
       });
     } catch (error) {
       console.error("Error adding review:", error);
