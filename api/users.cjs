@@ -106,7 +106,6 @@ usersRouter.post("/save-recipe", verifyToken, async (req, res) => {
 usersRouter.get("/saved-recipes", verifyToken, async (req, res) => {
   try{
     const { userId } = req.user;
-
     const savedRecipe = await viewAllSavedRecipes(userId);
     res.send(savedRecipe);
   } catch(error){
