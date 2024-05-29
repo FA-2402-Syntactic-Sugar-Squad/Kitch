@@ -1,102 +1,124 @@
-import Button from 'react-bootstrap/Button';
+import { useState, useEffect } from 'react';
+
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { useState } from 'react';
-import { Link } from "react-router-dom";
+import Offcanvas from 'react-bootstrap/Offcanvas';
 
-function NavBar({ token, setToken }) {
-  const [input, setInput] = useState("");
+import Searchbar from './Searchbar';
+import "../App.css";
 
-  //Can't fetch recipes_ingredients until route is created
-  const fetchData = async (value) => {
-    //make a request to the ingredients
-    const response = await fetch()
-    const data = response.json();
+function NavBar({ token, setToken, setSearchResults }) {
+  const [userProfile, setUserProfile] = useState("");
 
-    //no need to filter
-  }
-
-  const handleChange = (value) => {
-    setInput(value);
-    fetchData(value);
+  const handleRecipesFetched = (fetchedRecipes) => {
+    setSearchResults(fetchedRecipes);
   };
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(`api/users/profile`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const userProfileResult = await response.json();
+        setUserProfile(userProfileResult);
+      } catch (error) {
+        console.log("Error caught when fetching users profile from api", error);
+      }
+    }
+    fetchProfile();
+  }, []);
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
-      {token ? (
-        <Container fluid>
-          <Navbar.Brand to="/"> Kitch </Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbarScroll" />
-          <Navbar.Collapse id="navbarScroll">
-            <Nav
-              className="me-auto my-2 my-lg-0"
-              style={{ maxHeight: '500px' }}
-              navbarScroll
-            >
-              <Form className="d-flex">
-                <Form.Control
-                  type="search"
-                  placeholder="Search"
+    <>
+      {['xl'].map((expand) => (
+        <Navbar key={expand} expand={expand} className="bg-body-tertiary mb-3" sticky="top">
+          {token ? (
+            <Container fluid>
+              <Navbar.Brand href="/">Kitch</Navbar.Brand>
+              <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
+              <Navbar.Offcanvas
+                id={`offcanvasNavbar-expand-${expand}`}
+                aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
+                placement="end"
+              >
+                <Offcanvas.Header closeButton>
+                  <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${expand}`}>
+                    Welcome {userProfile.username}!
+                  </Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                  <Searchbar
+                    onRecipesFetched={handleRecipesFetched}
+                    type="search"
+                    placeholder="Search"
+                    className="me-2"
+                    aria-label="Search" />
+                  <Nav className="justify-content-end flex-grow-1 pe-3">
+                    <NavDropdown
+                      title="Account"
+                      id={`offcanvasNavbarDropdown-expand-${expand}`}
+                    >
+                      <NavDropdown.Item href="/myProfile">
+                        My Profile
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="#action4">
+                        Saved Recipes
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item onClick={() => {
+                        setToken("");
+                        localStorage.setItem("token", "");
+                      }}
+                        to="/">
+                        Logout
+                      </NavDropdown.Item>
+                    </NavDropdown>
+                    <Nav.Link href="/">Home</Nav.Link>
+                    <Nav.Link href="#action2"></Nav.Link>
+                  </Nav>
+                </Offcanvas.Body>
+              </Navbar.Offcanvas>
+            </Container>
+          ) : (
+            <Container fluid>
+              <Navbar.Brand href="/">Kitch</Navbar.Brand>
+              <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
+              <Navbar.Offcanvas
+                id={`offcanvasNavbar-expand-${expand}`}
+                aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
+                placement="end"
+              >
+                <Offcanvas.Header closeButton>
+                  <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${expand}`}>
+                    Hello World!
+                  </Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                  <Searchbar
+                    onRecipesFetched={handleRecipesFetched}
+                    type="search"
+                    placeholder="Search"
+                    className="me-2"
+                    aria-label="Search" />
+                  <Nav className="justify-content-end flex-grow-1 pe-3">
+                    <Nav.Link href="/">Home</Nav.Link>
+                    <Nav.Link href="/login">Login</Nav.Link>
+                  </Nav>
+                </Offcanvas.Body>
+              </Navbar.Offcanvas>
+            </Container>
+          )}
+        </Navbar>
+      ))}
 
-                  aria-label="Search"
-                  value={input}
-                  onChange={(e) => handleChange(e.target.value)}
-                />
-              </Form>
-              <Button variant="outline-success">Search</Button>
-            </Nav>
-
-            <Link to="/">Home</Link>
-            <NavDropdown title="Account" id="navbarScrollingDropdown" >
-              <NavDropdown.Item href="/myProfile">My Profile</NavDropdown.Item>
-              <NavDropdown.Item href="#action4">
-                Saved Recipes
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={() => {
-                setToken("");
-                localStorage.setItem("token", "");
-              }}
-                to="/">
-                Logout
-              </NavDropdown.Item>
-            </NavDropdown>
-
-          </Navbar.Collapse>
-        </Container>
-
-      ) : (
-        <Container fluid>
-          <Navbar.Brand href="#">Kitch</Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbarScroll" />
-          <Navbar.Collapse id="navbarScroll">
-            <Nav
-              className="me-auto my-2 my-lg-0"
-              style={{ maxHeight: '100px' }}
-              navbarScroll
-            >
-              <Form className="d-flex">
-                <Form.Control
-                  type="search"
-                  placeholder="Search"
-                  className="me-2"
-                  aria-label="Search"
-                  value={input}
-                  onChange={(e) => handleChange(e.target.value)}
-                />
-              </Form>
-              <Button variant="outline-success">Search</Button>
-            </Nav>
-
-            <Link to="/">Home</Link>
-            <Link to="/login">Login</Link>
-          </Navbar.Collapse>
-        </Container>
-      )}
-    </Navbar>
+    </>
   );
 }
 
