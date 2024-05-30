@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import SavedRecipes from "./SavedRecipes";
 
 const MyProfile = ({ token }) => {
   const [userProfile, setUserProfile] = useState("");
@@ -62,7 +63,7 @@ const MyProfile = ({ token }) => {
           </div>
           <div>
             <h3>My Saved Recipes</h3>
-            <h5>{savedRecipes}</h5>
+            
           </div>
           <div>
             <h3>Dietary Selection</h3>
@@ -87,6 +88,7 @@ const MyProfile = ({ token }) => {
       ) :
         <p>Loading...</p>
       }
+      <SavedRecipes/>
     </>
   )
 }
