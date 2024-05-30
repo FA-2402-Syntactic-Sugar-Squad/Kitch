@@ -1,12 +1,11 @@
 import { useState } from 'react';
-
-import Recipes from "../components/Recipes";
-import Ingredients from "../components/Ingredients";
-import RecipeDetails from "../components/RecipeDetails";
-
+import Recipes from '../components/Recipes';
+import Ingredients from '../components/Ingredients';
+import RecipeDetails from '../components/RecipeDetails';
 import Stack from 'react-bootstrap/Stack';
+import '../styling/Home_Register.css'; // Import the custom CSS
 
-const Home = ({ token,searchResults }) => {
+const Home = ({ token, searchResults }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   const handleSelectedRecipe = (recipe) => {
@@ -16,21 +15,25 @@ const Home = ({ token,searchResults }) => {
   return (
     <>
       <h3>Home Page</h3>
-      <Stack direction="horizontal" gap={3}>
-        <div className="p-2"><Ingredients /></div>
+      <Stack direction="horizontal" gap={3} className="full-height">
+        <div className="left-section p-2">
+          <Ingredients />
+        </div>
         <div className="vr" />
-        <div className="p-2">
+        <div className="center-section p-2">
           {selectedRecipe ? (
-            <RecipeDetails token={token} recipe={selectedRecipe}/>
+            <RecipeDetails token={token} recipe={selectedRecipe} />
           ) : (
             <p>Select a recipe to see details</p>
           )}
-          </div>
+        </div>
         <div className="vr" />
-        <div className="p-2"><Recipes token={token} onRecipeSelect={handleSelectedRecipe} searchResults={searchResults}/></div>
+        <div className="right-section p-2">
+          <Recipes token={token} onRecipeSelect={handleSelectedRecipe} searchResults={searchResults} />
+        </div>
       </Stack>
     </>
-  )
-}
+  );
+};
 
 export default Home;

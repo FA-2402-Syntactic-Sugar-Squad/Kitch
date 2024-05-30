@@ -33,3 +33,22 @@ label {
   font-weight: 600;
   color: rgb(34, 34, 34);
 }
+
+.full-height {
+  height: 100vh;
+  display: flex;
+}
+
+.left-section, .right-section {
+  width: 300px; 
+  overflow-y: auto; /* Enable vertical scrolling */
+  height: 100%;
+  background-color: #f0f0f0; 
+}
+
+.center-section {
+  flex-grow: 1;
+  overflow-y: auto; /* Optional: Enable scrolling if needed */
+  height: 100%;
+  background-color: #fff; 
+}
