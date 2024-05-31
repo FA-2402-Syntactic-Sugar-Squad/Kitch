@@ -203,9 +203,10 @@ const saveARecipe = async (userId, recipeId) => {
 //user: view all saved recipes
 const viewAllSavedRecipes = async(userId) => {
   try{
+    
     const savedRecipes = await prisma.users_recipes.findMany({
       where:{
-        userId,
+        userId:parseInt(userId),
       },
       include: {
         recipes: {

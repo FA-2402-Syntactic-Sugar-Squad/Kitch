@@ -103,10 +103,9 @@ usersRouter.post("/save-recipe", verifyToken, async (req, res) => {
 });
 
 //GET: see all saved recipes
-usersRouter.get("/saved-recipes", verifyToken, async (req, res) => {
+usersRouter.get("/saved-recipes", async (req, res) => {
   try{
-    const { userId } = req.user;
-
+    const userId = req.query.userId;    
     const savedRecipe = await viewAllSavedRecipes(userId);
     res.send(savedRecipe);
   } catch(error){
@@ -128,18 +127,24 @@ usersRouter.get("/saved-recipes/:id", verifyToken, async (req, res) => {
 });
 
 //Delete recipe
-usersRouter.delete("/saved-recipes/:id", verifyToken, async (req, res) => {
-  try{
-    const { userId } = req.user;
-    const id = parseInt(req.params.id);
+usersRouter.delete("/saved-recipes/:userId/:recipeId", async (req, res) => {
+  
+  const userId = parseInt(req.params.userId);
+  const recipeId = parseInt(req.params.recipeId);
 
-    const deleteRecipe = await deleteASavedRecipe(id);
-    res.send(deleteRecipe);
-  }catch(error){
-    console.log("Error caught when deleting a recipe", error);
-    res.status(500).send({ message: "Failed to delete recipe" });
+  try {      
+      await prisma.users_recipes.deleteMany({
+          where: {
+              userId: userId,
+              recipeId: recipeId
+          }
+      });
+
+      res.status(200).json({ message: 'Recipe deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting recipe:', error);
+      res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 //export
 module.exports = usersRouter;

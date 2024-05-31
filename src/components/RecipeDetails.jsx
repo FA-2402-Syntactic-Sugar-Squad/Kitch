@@ -99,7 +99,7 @@ const RecipeDetails = ({ recipe }) => {
 
   const handleRemoveFromFavorites = async () => {
     try {
-      const response = await fetch(`/api/users/saved-recipes/${recipe.id}`, {
+      const response = await fetch(`/api/users/saved-recipes/${userId}/${recipe.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

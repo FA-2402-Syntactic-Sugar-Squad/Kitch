@@ -5,7 +5,7 @@ import RecipeDetails from "../components/RecipeDetails.jsx";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-const SavedRecipes = () => {
+const SavedRecipes = ({ userId }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -14,7 +14,7 @@ const SavedRecipes = () => {
   useEffect(() => {
     const fetchSavedRecipes = async () => {
       try {
-        const response = await fetch("/api/users/saved-recipes", {
+        const response = await fetch(`/api/users/saved-recipes?userId=${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
