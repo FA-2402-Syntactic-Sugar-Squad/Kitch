@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
+import React from 'react';
+import { Container, Row, Col, Card, Button, Image } from 'react-bootstrap';
+import '../styling/MyProfile.css';
 
-const MyProfile = ({ token }) => {
+// const MyProfile = ({ token })
+const MyProfile = ({ token, user }) => {
   const [userProfile, setUserProfile] = useState("");
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [preferences, setPreferences] = useState({});
@@ -49,46 +53,62 @@ const MyProfile = ({ token }) => {
     } catch (error) {
       console.log("Error caught when fetching and updating preferences", error);
     }
+  };
+  if (!user || !userProfile) {
+    return <p>Loading...</p>;
   }
 
   return (
-    <>
-      {token ? (
-        <>
-          <h2>My Profile</h2>
-          <div>
-            <h4>Welcome {userProfile.username}</h4>
-            <p>Email: {userProfile.email}</p>
-          </div>
-          <div>
-            <h3>My Saved Recipes</h3>
-            <h5>{savedRecipes}</h5>
-          </div>
-          <div>
-            <h3>Dietary Selection</h3>
-            <form>
-              {Object.keys(preferences).map(pref => (
-                <div key={pref}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      name={pref}
-                      checked={preferences[pref]}
-                      onChange={handlePreferenceChange}
-                    />
-                    {pref.replace(/([A-Z])/g, '$1').trim()}
-                  </label>
-                </div>
+    <Container>
+      <Row className="mt-4">
+        <Col md={3}>
+          <Image src={user.profilePic} roundedCircle fluid />
+          <Card className="mt-3">
+            <Card.Body>
+              <Card.Title>Username: {user.username}</Card.Title>
+              <Card.Text>Name: {user.name}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={6}>
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>About Me</Card.Title>
+              <Card.Text>{user.about}</Card.Text>
+            </Card.Body>
+          </Card>
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>User's Top Reviews</Card.Title>
+              {/* Map through user's top reviews */}
+              {user.topReviews.map((review, index) => (
+                <Card.Text key={index}>{review}</Card.Text>
               ))}
-              <button type="button" onClick={savePreferences}>Save Preferences</button>
-            </form>
-          </div>
-        </>
-      ) :
-        <p>Loading...</p>
-      }
-    </>
-  )
-}
+            </Card.Body>
+          </Card>
+          <Card>
+            <Card.Body>
+              <Card.Title>Comments from User</Card.Title>
+              {/* Map through comments from user */}
+              {user.comments.map((comment, index) => (
+                <Card.Text key={index}>{comment}</Card.Text>
+              ))}
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={3}>
+          {isAdmin && (
+            <Card className="mb-3">
+              <Card.Body>
+                <Card.Title>Admin Tools</Card.Title>
+                <Button variant="primary">All Users</Button>
+              </Card.Body>
+            </Card>
+          )}
+        </Col>
+      </Row>
+    </Container>
+  );
+};
 
 export default MyProfile;
