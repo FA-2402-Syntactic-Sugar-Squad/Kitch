@@ -45,6 +45,32 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (recipe && userId) {
+      const checkIfFavorite = async () => {
+        try {
+          const response = await fetch(`/api/recipes/check-favorite-recipe?userId=${userId}&recipeId=${recipe.id}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setIsFavorite(data.isFavorite);
+          } else {
+            console.error("Failed to check if recipe is favorite");
+          }
+        } catch (error) {
+          console.error("Error checking if recipe is favorite:", error);
+        }
+      };
+
+      checkIfFavorite();
+    }
+  }, [recipe, userId, token]);
+
   const handleAddToFavorites = async () => {
     try {
       const response = await fetch("/api/users/save-recipe", {
@@ -60,7 +86,6 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
       });
 
       if (response.ok) {
-        const savedRecipe = await response.json();
         setIsFavorite(true);
       } else {
         const errorText = await response.text();
@@ -69,6 +94,50 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
       }
     } catch (error) {
       console.error("Error adding recipe:", error);
+    }
+  };
+
+  const handleRemoveFromFavorites = async () => {
+    try {
+      const response = await fetch(`/api/users/saved-recipes/${userId}/${recipe.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setIsFavorite(false);
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to remove recipe from favorites:", errorText);
+        throw new Error(errorText);
+      }
+    } catch (error) {
+      console.error("Error removing recipe:", error);
+    }
+  };
+
+  const handleRemoveFromFavorites = async () => {
+    try {
+      const response = await fetch(`/api/users/saved-recipes/${userId}/${recipe.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setIsFavorite(false);
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to remove recipe from favorites:", errorText);
+        throw new Error(errorText);
+      }
+    } catch (error) {
+      console.error("Error removing recipe:", error);
     }
   };
 
@@ -117,10 +186,9 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
               </Card.Text>
               <Button
                 variant="primary"
-                onClick={handleAddToFavorites}
-                disabled={isFavorite}
+                onClick={isFavorite ? handleRemoveFromFavorites : handleAddToFavorites}
               >
-                {isFavorite ? "Added" : "Add to Favorites"}
+                {isFavorite ? "Unfavorite" : "Add to Favorites"}
               </Button>
             </Card.Body>
           </Card>

@@ -86,7 +86,7 @@ const MyProfile = ({ token }) => {
       ) :
         <p>Loading...</p>
       }
-      <SavedRecipes/>
+      {userProfile && <SavedRecipes userId={userProfile.id}/>}
     </>
   )
 }
