@@ -14,7 +14,6 @@ const Home = ({ token, searchResults }) => {
 
   return (
     <>
-      <h3>Home Page</h3>
       <Stack direction="horizontal" gap={3} className="full-height">
         <div className="left-section p-2">
           <Ingredients />
