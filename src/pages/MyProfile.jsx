@@ -62,7 +62,7 @@ const MyProfile = ({ token }) => {
           </div>
           <div>
             <h3>My Saved Recipes</h3>
-            <h5>{savedRecipes}</h5>
+          
           </div>
           <div>
             <h3>Dietary Selection</h3>

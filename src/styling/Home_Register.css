@@ -40,15 +40,28 @@ label {
 }
 
 .left-section, .right-section {
-  width: 300px; 
-  overflow-y: auto; /* Enable vertical scrolling */
+  width: 350px; 
+  overflow-y: auto; 
   height: 100%;
   background-color: #f0f0f0; 
 }
 
 .center-section {
   flex-grow: 1;
-  overflow-y: auto; /* Optional: Enable scrolling if needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto; 
   height: 100%;
   background-color: #fff; 
+  padding: 1rem;
+}
+
+.vr {
+  border-left: 1px solid #dee2e6; 
+  height: 100%;
+}
+
+.p-2 {
+  padding: 1rem; 
 }
