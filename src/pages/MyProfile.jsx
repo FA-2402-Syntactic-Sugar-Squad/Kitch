@@ -4,8 +4,8 @@ import { Container, Row, Col, Card, Button, Image } from 'react-bootstrap';
 import '../styling/MyProfile.css';
 
 // const MyProfile = ({ token })
-const MyProfile = ({ token, user }) => {
-  const [userProfile, setUserProfile] = useState("");
+const MyProfile = ({ token }) => {
+  const [user, setUser] = useState("");
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [preferences, setPreferences] = useState({});
 
@@ -20,7 +20,7 @@ const MyProfile = ({ token, user }) => {
           }
         });
         const userProfileResult = await response.json();
-        setUserProfile(userProfileResult);
+        setUser(userProfileResult);
         setSavedRecipes(userProfileResult.users_recipes);
         const filteredPreferences = (({ id, userId, ...rest }) => rest)(userProfileResult.preferences[0]);
         setPreferences(filteredPreferences);
@@ -54,7 +54,8 @@ const MyProfile = ({ token, user }) => {
       console.log("Error caught when fetching and updating preferences", error);
     }
   };
-  if (!user || !userProfile) {
+
+  if (!user) {
     return <p>Loading...</p>;
   }
 
@@ -62,11 +63,12 @@ const MyProfile = ({ token, user }) => {
     <Container>
       <Row className="mt-4">
         <Col md={3}>
-          <Image src={user.profilePic} roundedCircle fluid />
+          <Image src="https://static.vecteezy.com/system/resources/previews/006/331/115/non_2x/chef-hat-restaurant-kitchen-line-style-icon-free-free-vector.jpg" 
+          roundedCircle fluid thumbnail />
           <Card className="mt-3">
             <Card.Body>
-              <Card.Title>Username: {user.username}</Card.Title>
-              <Card.Text>Name: {user.name}</Card.Text>
+              <Card.Title> {user.username}'s Profile</Card.Title>
+              {/* <Card.Text>Name: {user.name}</Card.Text> */}
             </Card.Body>
           </Card>
         </Col>
@@ -74,37 +76,37 @@ const MyProfile = ({ token, user }) => {
           <Card className="mb-3">
             <Card.Body>
               <Card.Title>About Me</Card.Title>
-              <Card.Text>{user.about}</Card.Text>
+              {/* <Card.Text>{user.about}</Card.Text> */}
             </Card.Body>
           </Card>
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>User's Top Reviews</Card.Title>
+              <Card.Title>User's Reviews</Card.Title>
               {/* Map through user's top reviews */}
-              {user.topReviews.map((review, index) => (
+              {/* {user.REVIEW.map((review, index) => (
                 <Card.Text key={index}>{review}</Card.Text>
-              ))}
+              ))} */}
             </Card.Body>
           </Card>
           <Card>
             <Card.Body>
               <Card.Title>Comments from User</Card.Title>
               {/* Map through comments from user */}
-              {user.comments.map((comment, index) => (
+              {/* {user.COMMENTS.map((comment, index) => (
                 <Card.Text key={index}>{comment}</Card.Text>
-              ))}
+              ))} */}
             </Card.Body>
           </Card>
         </Col>
         <Col md={3}>
-          {isAdmin && (
+          {/* {isAdmin && (
             <Card className="mb-3">
               <Card.Body>
                 <Card.Title>Admin Tools</Card.Title>
                 <Button variant="primary">All Users</Button>
               </Card.Body>
             </Card>
-          )}
+          )} */}
         </Col>
       </Row>
     </Container>
