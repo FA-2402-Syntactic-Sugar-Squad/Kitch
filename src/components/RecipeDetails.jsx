@@ -71,6 +71,32 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
     }
   }, [recipe, userId, token]);
 
+  useEffect(() => {
+    if (recipe && userId) {
+      const checkIfFavorite = async () => {
+        try {
+          const response = await fetch(`/api/recipes/check-favorite-recipe?userId=${userId}&recipeId=${recipe.id}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setIsFavorite(data.isFavorite);
+          } else {
+            console.error("Failed to check if recipe is favorite");
+          }
+        } catch (error) {
+          console.error("Error checking if recipe is favorite:", error);
+        }
+      };
+
+      checkIfFavorite();
+    }
+  }, [recipe, userId, token]);
+
   const handleAddToFavorites = async () => {
     try {
       const response = await fetch("/api/users/save-recipe", {
@@ -141,6 +167,28 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
     }
   };
 
+  const handleRemoveFromFavorites = async () => {
+    try {
+      const response = await fetch(`/api/users/saved-recipes/${userId}/${recipe.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setIsFavorite(false);
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to remove recipe from favorites:", errorText);
+        throw new Error(errorText);
+      }
+    } catch (error) {
+      console.error("Error removing recipe:", error);
+    }
+  };
+
   const handleDeleteReview = async (reviewId) => {
     try{
       await fetch(`/api/admin/review/${reviewId}`, {}, {
@@ -160,6 +208,7 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
   if (!recipe) {
     return <p>Select a recipe to see details.</p>;
   }
+  
   return (
     <>
       {token ? (
