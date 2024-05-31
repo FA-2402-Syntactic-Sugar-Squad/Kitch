@@ -207,6 +207,14 @@ const viewAllSavedRecipes = async(userId) => {
       where:{
         userId,
       },
+      include: {
+        recipes: {
+          select: {
+            title: true,
+            imageurl: true,
+          },
+        },
+      },
     });
     if (savedRecipes.length === 0){
       return [];

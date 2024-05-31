@@ -5,6 +5,27 @@ const { fetchRecipeData } = require("../db/index.cjs");
 const express = require("express")
 const recipesRouter = express.Router();
 
+// GET: Check if recipe is favorite for a user
+recipesRouter.get("/check-favorite-recipe", async (req, res, next) => {
+  try {
+    const { userId, recipeId } = req.query;
+    if (!userId || !recipeId) {
+      return res.status(400).json({ error: "User ID or recipe ID missing" });
+    }
+    const userRecipeRecord = await prisma.users_recipes.findFirst({
+      where: {
+        userId: parseInt(userId),
+        recipeId: parseInt(recipeId),
+      },
+    });
+    const isFavorite = !!userRecipeRecord;
+    res.json({ isFavorite });
+  } catch (error) {
+    console.error("Error checking if recipe is favorite:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // GET single recipe by ID
 recipesRouter.get("/:recipeId", async (req, res, next) => {
   try {
@@ -75,5 +96,7 @@ recipesRouter.get("/:recipeName", async (req,res,next) => {
     console.log('Error when getting recipes', error);
   }
 });
+
+
 
 module.exports = recipesRouter;
