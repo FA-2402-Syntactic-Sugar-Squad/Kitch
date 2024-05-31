@@ -5,17 +5,16 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
-const Ingredients = () => {
+const Ingredients = ({ token, isAdmin }) => {
   const [ingredientsByCategory, setIngredientsByCategory] = useState({});
   const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [deletedIngredients, setDeletedIngredients] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch('/api/ingredients');
         const data = await response.json();
-
-
         const groupedIngredients = data.reduce((acc, ingredient) => {
           if (!acc[ingredient.category]) {
             acc[ingredient.category] = [];
@@ -23,25 +22,13 @@ const Ingredients = () => {
           acc[ingredient.category].push(ingredient);
           return acc;
         }, {});
-
         setIngredientsByCategory(groupedIngredients);
       } catch (error) {
         console.error('Error fetching ingredients:', error);
       }
     };
-
     fetchData();
   }, []);
-
-  const handleIngredientClick = (ingredientId) => {
-    setSelectedIngredients((prevSelectedIngredients) => {
-      if (prevSelectedIngredients.includes(ingredientId)) {
-        return prevSelectedIngredients.filter(id => id !== ingredientId);
-      } else {
-        return [...prevSelectedIngredients, ingredientId];
-      }
-    });
-  };
 
   const fetchRecipesByIngredient = async () => {
     try {
@@ -57,15 +44,50 @@ const Ingredients = () => {
     }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    fetchRecipesByIngredient();
+  const handleIngredientClick = (ingredientId) => {
+    setSelectedIngredients((prevSelectedIngredients) => {
+      if (prevSelectedIngredients.includes(ingredientId)) {
+        return prevSelectedIngredients.filter(id => id !== ingredientId);
+      } else {
+        return [...prevSelectedIngredients, ingredientId];
+      }
+    });
+  };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try{
+      const shouldFetchRecipes = selectedIngredients.length > 0;
+      if (shouldFetchRecipes){
+        await fetchRecipesByIngredient();
+      } else {
+        await Promise.all(
+          selectedIngredients.map(ingredientId =>
+            axios.delete(`/api/admin/ingredients/${ingredientId}`, {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              }
+            })
+          )
+        );
+        setDeletedIngredients(selectedIngredients);
+        setSelectedIngredients([]);
+      }
+    } catch (error) {
+      console.log('Error caught when deleting ingredients', error);
+    }
+  };
+
+  const handleEdit = (ingredient) => {
+    // Logic to handle edit
   };
 
   return (
     <>
       <h2>Select your ingredients</h2>
+      {isAdmin && selectedIngredients.length > 0 && (
+        <p>Deleted ingredients: {deletedIngredients.join(', ')}</p>
+      )}
       <Form onSubmit={handleSubmit}>
         {Object.entries(ingredientsByCategory).map(([category, categoryIngredients]) => (
           <div key={category}>
@@ -79,12 +101,28 @@ const Ingredients = () => {
                     onChange={() => handleIngredientClick(ingredient.id)}
                   />
                   {ingredient.name}
+
                 </label>
               ))}
             </div>
           </div>
         ))}
-        <button type="submit" className="btn btn-primary mt-3">Search</button>
+        <Button type="submit" className="btn btn-primary mt-3">Search</Button>
+        {isAdmin && (
+            <Button
+              variant="danger"
+              type="button"
+              className="btn btn-danger mt-3 ml-3"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to delete the selected ingredients?')) {
+                  handleSubmit();
+                }
+              }}
+              disabled={selectedIngredients.length === 0}
+            >
+              Delete
+            </Button>
+          )}
       </Form>
     </>
   );

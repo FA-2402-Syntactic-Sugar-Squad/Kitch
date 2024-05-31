@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+
 const AddReview = ({ recipeId, onReviewAdded }) => {
   const [reviewData, setReviewData] = useState({
-    rating: 0,
     reviewMsg: "",
-    recipeId: recipeId,
   });
 
   const handleInputChange = (e) => {
@@ -19,13 +21,15 @@ const AddReview = ({ recipeId, onReviewAdded }) => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `/api/users/recipes/${recipeId}/ratings-reviews`,
+        `/api/recipes/${recipeId}/reviews`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(reviewData),
+          body: JSON.stringify({
+            reviewMsg: reviewData.reviewMsg
+          }),
         }
       );
 
@@ -33,14 +37,14 @@ const AddReview = ({ recipeId, onReviewAdded }) => {
         throw new Error("Network response was not ok");
       }
 
-      console.log("Review added:", response.data);
-      // onReviewAdded() will be called on recipe page for rendering purpose
-      // onReviewAdded();
+      console.log("Review added successfully");
+
+      if (onReviewAdded) {
+        onReviewAdded();
+      }
 
       setReviewData({
-        rating: 0,
         reviewMsg: "",
-        recipeId: recipeId,
       });
     } catch (error) {
       console.error("Error adding review:", error);
@@ -49,31 +53,19 @@ const AddReview = ({ recipeId, onReviewAdded }) => {
 
   return (
     <div>
-      <h5>Add your review</h5>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Rating:
-          <input
-            type="number"
-            name="rating"
-            value={reviewData.rating}
-            onChange={handleInputChange}
-            min="1"
-            max="5"
-            required
-          />
-        </label>
-        <label>
-          Review:
-          <textarea
-            name="reviewMsg"
-            value={reviewData.reviewMsg}
-            onChange={handleInputChange}
-            required
-          ></textarea>
-        </label>
-        <button type="submit">Submit Review</button>
-      </form>
+      <InputGroup className="mb-3" onSubmit={handleSubmit}>
+        <Form.Control
+          placeholder="Add your review"
+          aria-label="Add your review"
+          aria-describedby="basic-addon2"
+          value={reviewData.reviewMsg}
+          onChange={handleInputChange}
+          required
+        />
+        <Button variant="outline-secondary" id="button-addon2" type="submit">
+          Submit
+        </Button>
+      </InputGroup>
     </div>
   );
 };

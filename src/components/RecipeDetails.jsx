@@ -1,16 +1,26 @@
-import AddReview from "./AddReview.jsx";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+import AddReview from "./AddReview.jsx";
+import StarRating from "./StarRating.jsx";
+
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import "../App.css";
 
-const RecipeDetails = ({ recipe }) => {
+const RecipeDetails = ({ recipe, isAdmin }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [userId, setUserId] = useState(null);
   const [token, setToken] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
     setIsFavorite(false); // Reset isFavorite state when recipe changes
-  }, [recipe]); 
+    setReviews(recipe.ratingsAndReviews || []); //initializing the state
+    calculateAverageRating(recipe.ratingsAndReviews);
+  }, [recipe]);
+
 
   useEffect(() => {
     const tokenFromStorage = localStorage.getItem("token");
@@ -67,10 +77,6 @@ const RecipeDetails = ({ recipe }) => {
     }
   }, [recipe, userId, token]);
 
-  if (!recipe) {
-    return <p>Select a recipe to see details.</p>;
-  }
-
   const handleAddToFavorites = async () => {
     try {
       const response = await fetch("/api/users/save-recipe", {
@@ -119,6 +125,51 @@ const RecipeDetails = ({ recipe }) => {
     }
   };
 
+  const calculateAverageRating = (reviews) => {
+    if (reviews && reviews.length > 0) {
+      const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+      const avgRating = totalRating / reviews.length;
+      setAverageRating(avgRating);
+    } else {
+      setAverageRating(0);
+    }
+  };
+
+  const handleRateRecipe = async (rating) => {
+    try {
+      const endpoint = `/api/recipes/${recipe.id}/ratings`;
+      const response = await axios.post(endpoint, { rating }, { headers: { "Authorization": `Bearer ${token}` } });
+      const updatedRecipe = response.data;
+      setReviews(updatedRecipe.ratingsAndReviews);
+      calculateAverageRating(updatedRecipe.ratingsAndReviews);
+    } catch (error) {
+      console.error("Error rating recipe:", error);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      await axios.put(`/api/admin/review/${reviewId}`, {}, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const updatedReview = reviews.map(review =>
+        review.id === reviewId ? { ...review, reviewMsg: "" } : review
+      );
+      setReviews(updatedReview);
+      calculateAverageRating(updatedReview);
+    } catch (error) {
+      console.log("Error updating review", error);
+    }
+  };
+
+  if (!recipe) {
+    return <p>Select a recipe to see details.</p>;
+  };
+
+  const filteredReviews = Array.isArray(reviews) ? reviews.filter(review => review.reviewMsg !== "") : [];
+
   return (
     <>
       {token ? (
@@ -127,21 +178,32 @@ const RecipeDetails = ({ recipe }) => {
             <Card.Img variant="top" src={recipe.imageurl} />
             <Card.Body>
               <Card.Title>{recipe.title}</Card.Title>
+              <StarRating rating={averageRating} onRate={handleRateRecipe} />
               <Card.Text>
-                Instructions: {recipe.instructions}, Servings: {recipe.servings}
-                , Diet: {recipe.diet}, Rating and Reviews:
-                {recipe.ratingsAndReviews &&
-                recipe.ratingsAndReviews.length > 0 ? (
-                  recipe.ratingsAndReviews.map((review) => (
-                    <div key={review.id}>
-                      <strong>Rating:</strong> {review.rating} <br />
-                      <strong>Review:</strong> {review.reviewMsg}
+                <strong>Instructions:</strong> {recipe.instructions} <br></br>
+                <strong>Servings:</strong> {recipe.servings},
+                <br></br><strong>Diet:</strong> {recipe.diet},
+                <br></br><strong>Reviews:</strong>
+                {filteredReviews.length > 0 ? (
+                  filteredReviews.map((review) => (
+                    <div key={review.id} id="reviews">
+                      Review: {review.reviewMsg}{" "}
+                      {isAdmin && review.reviewMsg && (
+                        <Button
+                          id="review-btn"
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDeleteReview(review.id)}
+                        >
+                          Delete
+                        </Button>
+                      )}
                     </div>
                   ))
                 ) : (
                   <p>No reviews yet.</p>
                 )}
-                <AddReview recipeId={recipe.id} />
+                <AddReview recipeId={recipe.id} onReviewAdded={() => setReviews([...reviews, { reviewMsg: "Review submitted by current user" }])} />
               </Card.Text>
               <Button
                 variant="primary"

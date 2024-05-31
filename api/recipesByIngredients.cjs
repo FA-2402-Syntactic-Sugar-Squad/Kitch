@@ -62,6 +62,3 @@ recipeByIngredientRouter.get("/:ingredientIds", async (req, res, next) => {
 });
 
 module.exports = recipeByIngredientRouter;
-
-
-module.exports = recipeByIngredientRouter;

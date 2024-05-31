@@ -4,15 +4,29 @@ const prisma = new PrismaClient();
 const express = require('express');
 const adminPrivRouter = express.Router();
 
-const { verifyAdmin, verifyToken, requireAdmin } = require('./../auth/middleware.cjs');
+const { verifyToken, requireAdmin } = require('./../auth/middleware.cjs');
 const { adminPrivRatingsAndReviews, adminPrivDeleteReviewMsg, adminPrivUpdateRecipeImageUrl } = require("../db/index.cjs");
 
 adminPrivRouter.use(verifyToken);
 
 //PATH: api/admin
 
-// GET: all ratings and reviews
-adminPrivRouter.get('/', requireAdmin, async (req, res, next) => {
+/** USERS **/
+//GET: all users
+adminPrivRouter.get('/users', requireAdmin, async (req, res) => {
+  try{
+    const users = await prisma.users.findMany();
+    res.send(users);
+  }catch(error){
+    console.log('Error fetching users', error);
+  }
+});
+
+
+/** RATINGS & REVIEWS **/
+
+//GET: ratings and reviews - All ratings and reviews  
+adminPrivRouter.get('/', requireAdmin, async (req, res) => {
   try {
     const fetchAllRatingsAndReviews = await adminPrivRatingsAndReviews();
     if(!fetchAllRatingsAndReviews){
@@ -25,8 +39,8 @@ adminPrivRouter.get('/', requireAdmin, async (req, res, next) => {
   }
 });
 
-// Moderate (update) a review
-adminPrivRouter.put('/review/:id', verifyAdmin, async (req, res, next) => {
+//PUT: review - Update a review to null (if inappropriate)
+adminPrivRouter.put('/review/:id', requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const updatedReviewMsg = await adminPrivDeleteReviewMsg(id);
@@ -37,8 +51,10 @@ adminPrivRouter.put('/review/:id', verifyAdmin, async (req, res, next) => {
   }
 });
 
-//PUT - recipe image
-adminPrivRouter.put("/:recipeId", verifyAdmin, async (req, res) => {
+/**  RECIPES **/
+
+//PUT: recipe - Update recipe img url
+adminPrivRouter.put("/:recipeId", requireAdmin, async (req, res) => {
   try{
     const recipeId = parseInt(req.params.recipeId);
     if (isNaN(recipeId)) {
@@ -53,8 +69,10 @@ adminPrivRouter.put("/:recipeId", verifyAdmin, async (req, res) => {
   }
 });
 
-// POST /ingredients - Create a new ingredient
-adminPrivRouter.post("/", verifyAdmin, async (req, res) => {
+/** INGREDIENTS **/
+
+//POST: ingredients - Create a new ingredient
+adminPrivRouter.post("/", requireAdmin, async (req, res) => {
   try {
     const { name, description, category } = req.body;
     const ingredient = await prisma.ingredients.create({
@@ -67,8 +85,8 @@ adminPrivRouter.post("/", verifyAdmin, async (req, res) => {
   }
 });
 
-// PUT /ingredients/:id - Update an existing ingredient by ID
-adminPrivRouter.put("/ingredients/:id", verifyAdmin, async (req, res, next) => {
+//PUT: ingredients - Update an existing ingredient by ID
+adminPrivRouter.put("/ingredients/:id", requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, category } = req.body;
@@ -83,8 +101,8 @@ adminPrivRouter.put("/ingredients/:id", verifyAdmin, async (req, res, next) => {
   }
 });
 
-// DELETE /ingredients/:id - Delete an ingredient by ID
-adminPrivRouter.delete("/ingredients/:id", verifyAdmin, async (req, res, next) => {
+//DELETE: ingredients - Delete an ingredient by ID
+adminPrivRouter.delete("/ingredients/:id", requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     await prisma.ingredients.delete({

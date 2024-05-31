@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import axios from 'axios';
 
-const Recipes = ({ token, onRecipeSelect,searchResults }) => {
+const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
@@ -16,19 +17,40 @@ const Recipes = ({ token, onRecipeSelect,searchResults }) => {
       } catch (error) {
         console.error("Error when trying to fetch all recipes", error);
       }
-     }
-     fetchAllRecipes();
-    }, []);
+    }
+    fetchAllRecipes();
+  }, []);
 
+  //Button handlers start
   const handleClick = (recipe) => {
     onRecipeSelect(recipe);
   };
+
+  const handleEdit = async (recipeId) => {
+    const newImageUrl = prompt('Enter the new image URL:');
+    if (!newImageUrl) return;
+
+    try {
+      await axios.put(`/api/admin/${recipeId}`, { newImageUrl }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+      });
+      const updatedRecipes = recipes.map(recipe =>
+        recipe.id === recipeId ? { ...recipe, imageurl: newImageUrl } : recipe
+      );
+      setRecipes(updatedRecipes);
+    } catch (error) {
+      console.log('Error when trying to update image on front end.', error);
+    }
+  };
+  //Button handlers end
 
   const recipesToDisplay = searchResults.length > 0 ? searchResults : recipes;
 
   if (!recipes) {
     return <h2>Loading..</h2>
-  }
+  };
 
   return (
     <>
@@ -43,6 +65,9 @@ const Recipes = ({ token, onRecipeSelect,searchResults }) => {
                 <Card.Body>
                   <Card.Title>{curRecipe.title}</Card.Title>
                   <Button variant="primary" onClick={() => handleClick(curRecipe)}>See Recipe</Button>
+                  {isAdmin && (
+                    <Button variant="warning" onClick={() => handleEdit(curRecipe.id)}>Edit</Button>
+                  )}
                 </Card.Body>
               </Card >
             )

@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const { fetchRecipeData } = require("../db/index.cjs");
+const { createRatingForRecipe, createReviewForRecipe } = require("../db/index.cjs");
 const express = require("express")
 const recipesRouter = express.Router();
 
@@ -65,38 +65,43 @@ recipesRouter.get('/', async (req, res, next) => {
   }
 });
 
-// GET recipe details by ID - COMMENTED THIS OUT BC LINE 9-30 DOES THE SAME THING
-// recipesRouter.get('/:id', async (req, res, next) => {
-//   try {
-//     const recipeId = parseInt(req.params.id);
-
-//     // Fetch the recipe data using Prisma's findUnique method
-//     const recipe = await prisma.recipes.findUnique({
-//       where: { id: recipeId },
-//     });
-
-//     if (!recipe) {
-//       return res.status(404).json({ error: 'Recipe not found' });
-//     }
-
-//     res.json(recipe);
-//   } catch (error) {
-//     console.error('Error when getting recipe by ID:', error);
-//     res.status(500).json({ error: 'Internal server error' });
+// //test
+// recipesRouter.get("/:recipeName", async (req,res,next) => {
+//   try{
+//     const recipeName = req.params.recipeName;
+//     const singleRecipe = await fetchRecipeData(recipeName);
+//     res.send(singleRecipe);
+//   }catch(error){
+//     console.log('Error when getting recipes', error);
 //   }
 // });
 
-//test
-recipesRouter.get("/:recipeName", async (req,res,next) => {
-  try{
-    const recipeName = req.params.recipeName;
-    const singleRecipe = await fetchRecipeData(recipeName);
-    res.send(singleRecipe);
-  }catch(error){
-    console.log('Error when getting recipes', error);
+// POST: Create rating for a recipe
+recipesRouter.post("/:recipeId/ratings", async (req, res) => {
+  try {
+    const { rating } = req.body;
+    const recipeId = parseInt(req.params.recipeId);
+
+    const createdRating = await createRatingForRecipe(recipeId, rating);
+    res.send(createdRating);
+  } catch (error) {
+    console.log("Error caught when creating rating for recipe:", error);
+    res.status(500).send({ message: "Failed to create rating" });
   }
 });
 
+// POST: Create review for a recipe
+recipesRouter.post("/:recipeId/reviews", async (req, res) => {
+  try {
+    const { reviewMsg } = req.body;
+    const recipeId = parseInt(req.params.recipeId);
 
+    const createdReview = await createReviewForRecipe(recipeId, reviewMsg);
+    res.send(createdReview);
+  } catch (error) {
+    console.log("Error caught when creating review for recipe:", error);
+    res.status(500).send({ message: "Failed to create review" });
+  }
+});
 
 module.exports = recipesRouter;
