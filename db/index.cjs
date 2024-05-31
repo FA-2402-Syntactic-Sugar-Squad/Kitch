@@ -113,39 +113,47 @@ const updateUserPreferences = async(userId, newPreferences) => {
   }
 };
 
-//user: post ratings and reviews on saved recipes
-const updateRatingsAndReviews = async(id, rating, reviewMsg) => {
-  try{
-    const updatedRatingAndReview = await prisma.users_recipes.update({
+//user: update ratings on saved recipes
+const updateRating = async (recipeId, userId, rating) => {
+  try {
+    const updatedRating = await prisma.users_recipes.update({
       where: {
-        id: id 
-      }, data: {
-        rating: rating,
-        reviewMsg: reviewMsg,
-      }
+        userId_recipeId: {
+          userId: userId,
+          recipeId: recipeId,
+        },
+      },
+      data: {
+        rating: parseFloat(rating),
+      },
     });
-    return updatedRatingAndReview;
-  } catch(error){
-    console.log("Error caught when creating a rating and review", error);
+    return updatedRating;
+  } catch (error) {
+    console.log("Error updating rating:", error);
+    throw error;
   }
 };
 
-//user: leave a rating and review on recipes that are not saved. NOT WORKING
-const createRatingAndReviewForRecipe = async (recipeId, rating, reviewMsg) => {
-  try{
-    const ratingFloat = parseFloat(rating)
-    const createdRatingAndReview = await prisma.ratingsAndReviews.create({
+//user: update reviews on saved recipes
+const updateReview = async (recipeId, userId, reviewMsg) => {
+  try {
+    const updatedReview = await prisma.users_recipes.update({
+      where: {
+        userId_recipeId: {
+          userId: userId,
+          recipeId: recipeId,
+        },
+      },
       data: {
-        recipeId: recipeId,
-        rating: ratingFloat,
-        reviewMsg: reviewMsg,
-      }
+        reviewMsg: reviewMsg || "",
+      },
     });
-    return createdRatingAndReview;
-  }catch (error){
-    console.log("Error caught when creating rating and review for recipe:", error);
+    return updatedReview;
+  } catch (error) {
+    console.log("Error updating review:", error);
+    throw error;
   }
-}
+};
 
 //user: view ratings and reviews
 const viewAllRatingAndReviews = async (id) => {
@@ -243,21 +251,43 @@ const checkSingleSavedRecipe = async (userId, id) => {
   }
 };
 
-//delete a recipe
-const deleteASavedRecipe = async (id) => {
-  try{
-    const deleteRecipe = await prisma.users_recipes.delete({
-      where: {
-        id
-      },
-    });
-    return deleteRecipe;
-  }catch(error) {
-    console.log("Error caught when deleting a saved recipe", error);
-  }
-};
 // *** ATTN: USERS FUNCTIONS END *** \\
 
+// *** ATTN: RECIPES FUNCTIONS START *** \\
+// Function to create a rating for a recipe
+const createRatingForRecipe = async (recipeId, rating) => {
+  try {
+    const ratingFloat = parseFloat(rating);
+    const createdRating = await prisma.ratingsAndReviews.create({
+      data: {
+        recipeId: recipeId,
+        rating: ratingFloat,
+        reviewMsg: "", // Add an empty string for reviewMsg
+      },
+    });
+    return createdRating;
+  } catch (error) {
+    console.log("Error caught when creating rating for recipe:", error);
+    throw error;
+  }
+};
+
+// Function to create a review for a recipe
+const createReviewForRecipe = async (recipeId, reviewMsg) => {
+  try {
+    const createdReview = await prisma.ratingsAndReviews.create({
+      data: {
+        recipeId: recipeId,
+        reviewMsg: reviewMsg,
+      },
+    });
+    return createdReview;
+  } catch (error) {
+    console.log("Error caught when creating review for recipe:", error);
+    throw error;
+  }
+};
+// *** ATTN: RECIPES FUNCTIONS END *** \\
 
 module.exports = { 
   adminPrivRatingsAndReviews,
@@ -265,12 +295,13 @@ module.exports = {
   adminPrivUpdateRecipeImageUrl,
   getUserInfo,
   updateUserPreferences,
-  updateRatingsAndReviews,
-  createRatingAndReviewForRecipe,
+  updateRating,
+  updateReview,
   viewAllRatingAndReviews,
   deleteRatingAndReview,
   saveARecipe,
   viewAllSavedRecipes,
   checkSingleSavedRecipe,
-  deleteASavedRecipe
+  createRatingForRecipe,
+  createReviewForRecipe,
  }

@@ -1,7 +1,7 @@
 //imports
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { getUserInfo, updateUserPreferences, updateRatingsAndReviews, viewAllRatingAndReviews, deleteRatingAndReview, saveARecipe, viewAllSavedRecipes, deleteASavedRecipe, checkSingleSavedRecipe, createRatingAndReviewForRecipe } = require("../db/index.cjs");
+const { getUserInfo, updateUserPreferences, updateRating, updateReview, viewAllRatingAndReviews, deleteRatingAndReview, saveARecipe, viewAllSavedRecipes, checkSingleSavedRecipe } = require("../db/index.cjs");
 const { verifyToken } = require("../auth/middleware.cjs");
 const express = require("express");
 const usersRouter = express.Router();
@@ -13,7 +13,7 @@ usersRouter.get("/", async (req, res) => {
 
 //GET: Profile
 usersRouter.get("/profile", verifyToken, async (req, res) => {
-  try{
+  try {
     const id = req.user.id;
 
     const fetchProfile = await getUserInfo(id);
@@ -23,128 +23,127 @@ usersRouter.get("/profile", verifyToken, async (req, res) => {
     res.send(fetchProfile);
   } catch (error) {
     console.log("Error caught when fetching profile");
-    res.status(500).send({message: "Internal server error"});
+    res.status(500).send({ message: "Internal server error" });
   }
 });
 
 //PUT: update preferences
 usersRouter.put("/preferences", verifyToken, async (req, res) => {
-  try{
+  try {
     const userId = req.user.id;
     const newPreferences = req.body;
 
     const updatedPreferences = await updateUserPreferences(userId, newPreferences);
     res.send(updatedPreferences);
-  }catch(error){
+  } catch (error) {
     console.log("Error caught when updating preferences", error);
   }
 });
 
-//PUT: update reviews & ratings on saved recipes
-usersRouter.put("/update-rating-and-review/:id", verifyToken, async (req, res) => {
-  try{
-    const { rating, reviewMsg } = req.body;
+usersRouter.put("/update-rating/:id", verifyToken, async (req, res) => {
+  try {
+    const { rating } = req.body;
     const userId = req.user.userId;
-    const savedRecipeId = parseInt(req.params.id);
+    const recipeId = parseInt(req.params.id);
 
-    const updatedRatingAndReview = await updateRatingsAndReviews(savedRecipeId, rating, reviewMsg);
-    res.send(updatedRatingAndReview);
-  }catch(error){
-    console.log("Error caught when creating rating and review:", error);
+    const updatedRating = await updateRating(recipeId, userId, rating);
+    res.send(updatedRating);
+  } catch (error) {
+    console.log("Error caught when updating rating:", error);
+    res.status(500).send({ message: "Failed to update rating" });
   }
 });
 
-//Post: create reviews and ratings on non-saved recipes anonymously - NOT WORKING
-usersRouter.post("/recipes/:recipeId/ratings-reviews", async (req, res) => {
-  try{
-    const { rating, reviewMsg } = req.body;
-    const recipeId= parseInt(req.params.recipeId);
+usersRouter.put("/update-review/:id", verifyToken, async (req, res) => {
+  try {
+    const { reviewMsg } = req.body;
+    const userId = req.user.userId;
+    const recipeId = parseInt(req.params.id);
 
-    const createdRatingAndReview = await createRatingAndReviewForRecipe(recipeId, rating, reviewMsg);
-    res.send(createdRatingAndReview);
-  } catch(error){
-    res.status(500).send({ message: "Failed to create rating and review" });
+    const updatedReview = await updateReview(recipeId, userId, reviewMsg);
+    res.send(updatedReview);
+  } catch (error) {
+    console.log("Error caught when updating review:", error);
+    res.status(500).send({ message: "Failed to update review" });
   }
-})
+});
 
 //GET: see their reviews & ratings
 usersRouter.get("/ratings-and-reviews", verifyToken, async (req, res) => {
-  try{
+  try {
     const userId = req.user.userId;
     const viewMyRatingsAndReviews = await viewAllRatingAndReviews(userId);
     res.send(viewMyRatingsAndReviews);
-  }catch(error){
+  } catch (error) {
     console.log("Error caught when fetching all ratings and reviews:", error);
   }
 });
 
 //DELETE: delete reviews & ratings
 usersRouter.put("/ratings-and-reviews/:id", verifyToken, async (req, res) => {
-  try{
+  try {
     const id = parseInt(req.params.id);
     // const { rating, reviewMsg } = req.body;
 
     const deleteCurrentReviewAndRating = await deleteRatingAndReview(id);
     res.send(deleteCurrentReviewAndRating);
-  }catch(error){
+  } catch (error) {
     console.log("Error caught when deleting rating and review:", error);
   }
 });
 
 //POST: save recipes
 usersRouter.post("/save-recipe", verifyToken, async (req, res) => {
-  try{
+  try {
     const { userId, recipeId } = req.body;
     const saveCurRecipe = await saveARecipe(userId, recipeId);
     res.send(saveCurRecipe);
-  } catch(error){
+  } catch (error) {
     console.log("Error caught when saving a recipe:", error)
   }
 });
 
 //GET: see all saved recipes
 usersRouter.get("/saved-recipes", async (req, res) => {
-  try{
-    const userId = req.query.userId;    
+  try {
+    const userId = req.query.userId;
     const savedRecipe = await viewAllSavedRecipes(userId);
     res.send(savedRecipe);
-  } catch(error){
+  } catch (error) {
     console.log("Error caught when fetching all saved recipes:", error)
   }
 });
 
 //GET: see 1 saved recipe
 usersRouter.get("/saved-recipes/:id", verifyToken, async (req, res) => {
-  try{
+  try {
     const { userId } = req.user;
     const id = parseInt(req.params.id);
 
     const currentRecipe = await checkSingleSavedRecipe(userId, id);
     res.send(currentRecipe);
-  }catch(error){
+  } catch (error) {
     console.log("Error caught when seeing single recipe", error);
   }
 });
 
 //Delete recipe
 usersRouter.delete("/saved-recipes/:userId/:recipeId", async (req, res) => {
-  
   const userId = parseInt(req.params.userId);
   const recipeId = parseInt(req.params.recipeId);
-
-  try {      
-      await prisma.users_recipes.deleteMany({
-          where: {
-              userId: userId,
-              recipeId: recipeId
-          }
-      });
-
-      res.status(200).json({ message: 'Recipe deleted successfully' });
+  try {
+    await prisma.users_recipes.deleteMany({
+      where: {
+        userId: userId,
+        recipeId: recipeId
+      }
+    });
+    res.status(200).json({ message: 'Recipe deleted successfully' });
   } catch (error) {
-      console.error('Error deleting recipe:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.error('Error deleting recipe:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 //export
 module.exports = usersRouter;

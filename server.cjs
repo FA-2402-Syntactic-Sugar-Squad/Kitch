@@ -16,6 +16,15 @@ const path = require("path");
 const morgan = require("morgan");
 app.use(morgan("dev"));
 
+// Middleware to set Cache-Control header to prevent caching
+const noCacheMiddleware = (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+};
+
+// Apply the middleware globally to all API routes
+app.use('/api', noCacheMiddleware);
+
 //Logger
 app.use((req, res, next) => {
   console.log("<____Body Logger START____>")
