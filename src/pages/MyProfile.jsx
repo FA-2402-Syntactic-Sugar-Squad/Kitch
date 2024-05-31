@@ -3,7 +3,6 @@ import SavedRecipes from "./SavedRecipes";
 
 const MyProfile = ({ token }) => {
   const [userProfile, setUserProfile] = useState("");
-  const [savedRecipes, setSavedRecipes] = useState([]);
   const [preferences, setPreferences] = useState({});
 
   useEffect(() => {
@@ -18,7 +17,6 @@ const MyProfile = ({ token }) => {
         });
         const userProfileResult = await response.json();
         setUserProfile(userProfileResult);
-        setSavedRecipes(userProfileResult.users_recipes);
         const filteredPreferences = (({ id, userId, ...rest }) => rest)(userProfileResult.preferences[0]);
         setPreferences(filteredPreferences);
       } catch (error) {

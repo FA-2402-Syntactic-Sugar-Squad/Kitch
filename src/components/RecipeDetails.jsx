@@ -1,16 +1,20 @@
-import AddReview from "./AddReview.jsx";
 import React, { useState, useEffect } from "react";
+
+import AddReview from "./AddReview.jsx";
+
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 
-const RecipeDetails = ({ recipe }) => {
+const RecipeDetails = ({ recipe, isAdmin }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [userId, setUserId] = useState(null);
   const [token, setToken] = useState(null);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     setIsFavorite(false); // Reset isFavorite state when recipe changes
-  }, [recipe]); 
+    setReviews(recipe.ratingsAndReviews || []); //initializing the state
+  }, [recipe]);
 
   useEffect(() => {
     const tokenFromStorage = localStorage.getItem("token");
@@ -41,10 +45,6 @@ const RecipeDetails = ({ recipe }) => {
     }
   }, []);
 
-  if (!recipe) {
-    return <p>Select a recipe to see details.</p>;
-  }
-
   const handleAddToFavorites = async () => {
     try {
       const response = await fetch("/api/users/save-recipe", {
@@ -72,6 +72,25 @@ const RecipeDetails = ({ recipe }) => {
     }
   };
 
+  const handleDeleteReview = async (reviewId) => {
+    try{
+      await fetch(`/api/admin/review/${reviewId}`, {}, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const updatedReview = reviews.map(review =>
+        review.id === reviewId ? { ...review, reviewMsg: "" } : review
+      );
+      setReviews(updatedReview);
+    }catch(error){
+      console.log("Error updating review", error);
+    }
+  }
+
+  if (!recipe) {
+    return <p>Select a recipe to see details.</p>;
+  }
   return (
     <>
       {token ? (
@@ -84,7 +103,7 @@ const RecipeDetails = ({ recipe }) => {
                 Instructions: {recipe.instructions}, Servings: {recipe.servings}
                 , Diet: {recipe.diet}, Rating and Reviews:
                 {recipe.ratingsAndReviews &&
-                recipe.ratingsAndReviews.length > 0 ? (
+                  recipe.ratingsAndReviews.length > 0 ? (
                   recipe.ratingsAndReviews.map((review) => (
                     <div key={review.id}>
                       <strong>Rating:</strong> {review.rating} <br />

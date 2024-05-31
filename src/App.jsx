@@ -11,14 +11,21 @@ import './App.css';
 
 function App() {
   const [token, setToken] = useState("");
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
 
   //Added a useEffect for Token, will set the token as we refresh and nav through pages.
-  useEffect(()=> {
-    const localToken = localStorage.getItem("token");
-    if (localToken) {
-      setToken(localToken);
+  useEffect(() => {
+    try {
+      const localToken = localStorage.getItem("token");
+      if (localToken) {
+        setToken(localToken);
+
+        const user = JSON.parse(atob(localToken.split('.')[1]));
+        setIsAdmin(user.isadmin);
+      }
+    } catch (error) {
+      console.log("Error caught when fetching api", error);
     }
   }, []);
 
@@ -26,15 +33,15 @@ function App() {
     <>
       {/*We need to remove the hard coded recipe id in the url in AddReview.jsx*/}
       <NavBar token={token} setToken={setToken} setSearchResults={setSearchResults} />
-      
+
       <Routes>
-        <Route path="/" element={<Home token={token} searchResults={searchResults}/>}/>
-        <Route path="/register" element={<Register token={token} setToken={setToken}/>}/>
-        <Route path="/login" element={<Login token={token} setToken={setToken}/>}/>    
-        <Route path="/myProfile" element={<MyProfile token={token}/>} />
+        <Route path="/" element={<Home token={token} searchResults={searchResults} isAdmin={isAdmin}/>} />
+        <Route path="/register" element={<Register token={token} setToken={setToken} />} />
+        <Route path="/login" element={<Login token={token} setToken={setToken} />} />
+        <Route path="/myProfile" element={<MyProfile token={token} />} />
       </Routes>
 
-      
+
     </>
   )
 }
