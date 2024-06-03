@@ -174,8 +174,8 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
     <>
       {token ? (
         <>
-          <Card style={{ width: "18rem" }}>
-            <Card.Img variant="top" src={recipe.imageurl} />
+          <Card style={{ width: "80rem" }}>
+            <Card.Img variant="top" src={recipe.imageurl} className="see-dets-img"/>
             <Card.Body>
               <Card.Title>{recipe.title}</Card.Title>
               <StarRating rating={averageRating} onRate={handleRateRecipe} />

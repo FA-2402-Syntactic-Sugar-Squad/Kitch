@@ -93,9 +93,6 @@ function NavBar({ token, setToken, selectedIngredients, setSelectedIngredients, 
                       <NavDropdown.Item as={Link} to="/myProfile">
                         My Profile
                       </NavDropdown.Item>
-                      <NavDropdown.Item href="#action4">
-                        Saved Recipes
-                      </NavDropdown.Item>
                       <NavDropdown.Divider />
                       <NavDropdown.Item onClick={handleLogout}>
                         Logout

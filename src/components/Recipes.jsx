@@ -6,6 +6,8 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import axios from 'axios';
 import "../App.css";
 
+import "../App.css";
+
 const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
   const [recipes, setRecipes] = useState([]);
 
@@ -21,6 +23,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
     };
     fetchAllRecipes();
   }, []);
+
 
   useEffect(() => {
     if (searchResults.length > 0) {
@@ -38,6 +41,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
       fetchAllRecipes(); 
     }
   }, [searchResults]);
+
 
   const handleClick = (recipe) => {
     if (token) {
@@ -72,6 +76,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
     </Tooltip>
   );
 
+
   const recipesToDisplay = recipes; 
 
   if (!recipes.length) {
@@ -90,11 +95,13 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
             overlay={renderTooltip}
           >
             <Card style={{ width: '19rem' }} onClick={() => handleClick(curRecipe)} >
+
               <Card.Img variant="top" src={curRecipe.imageurl} className="recipe-img" />
               <Card.Body>
                 <Card.Title>{curRecipe.title}</Card.Title>
                 {isAdmin && (
                   <Button variant="warning" onClick={(e) => {e.stopPropagation(); handleEdit(curRecipe.id);}}>Edit</Button>
+
                 )}
               </Card.Body>
             </Card>
