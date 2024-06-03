@@ -6,3 +6,16 @@
 .card-title {
   font-weight: bold;
 }
+
+.saved-recipe-img{
+  float: left;
+  width:  200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+#modal-size{
+  max-width: 60%;
+  min-width: 400px;
+  margin: auto;
+}
