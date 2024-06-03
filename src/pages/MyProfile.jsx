@@ -66,7 +66,7 @@ const MyProfile = ({ token }) => {
           <Card className="mt-3">
             <Card.Body>
               <Card.Title> {user.username}'s Profile</Card.Title>
-              <Card.Text>Name: {user.name}</Card.Text>
+              <Card.Text>Email: {user.email}</Card.Text>
             </Card.Body>
           </Card>
         </Col>

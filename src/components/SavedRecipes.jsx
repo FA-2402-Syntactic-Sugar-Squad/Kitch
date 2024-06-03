@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
+
 import RecipeDetails from "./RecipeDetails.jsx";
+
+import Card from "react-bootstrap/Card";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import "../styling/MyProfile.css";
 
 const SavedRecipes = ({ userId, token }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -68,7 +71,7 @@ const SavedRecipes = ({ userId, token }) => {
           style={{ width: "18rem", marginBottom: "20px" }}
         >
           <Link to="#" onClick={() => handleRecipeClick(recipe.recipeId)}>
-            <Card.Img variant="top" src={recipe.recipes.imageurl} />
+            <Card.Img variant="top" src={recipe.recipes.imageurl} className="saved-recipe-img"/>
             <Card.Body>
               <Card.Title>{recipe.recipes.title}</Card.Title>
             </Card.Body>
@@ -76,7 +79,7 @@ const SavedRecipes = ({ userId, token }) => {
         </Card>
       ))}
       {selectedRecipe && (
-        <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal show={showModal} onHide={handleCloseModal} className="modal-xl" id="modal-size" role="document">
           <Modal.Header closeButton>
             <Modal.Title>{selectedRecipe.title}</Modal.Title>
           </Modal.Header>
