@@ -1,10 +1,8 @@
-import React from "react";
-import AsyncSelect from "react-select/async";
+import React from 'react';
+import AsyncSelect from 'react-select/async';
+import Container from 'react-bootstrap/Container';
 
-import "../App.css";
-import Container from "react-bootstrap/esm/Container";
-
-const Searchbar = ({ onRecipesFetched }) => {
+const Searchbar = ({ selectedIngredients, setSelectedIngredients }) => {
   const loadOptions = async (inputValue) => {
     try {
       const response = await fetch(`/api/ingredients/search?query=${inputValue}`);
@@ -17,25 +15,17 @@ const Searchbar = ({ onRecipesFetched }) => {
 
       return options;
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
       return [];
     }
   };
 
-  const handleSelectChange = async (selectedOptions) => {
-    try {
-      const selectedValues = selectedOptions.map(option => option.value);
-
-      const response = await fetch('/api/recipes/byIngredient/' + selectedValues.join(','));
-      const recipes = await response.json();
-      onRecipesFetched(recipes);
-
-      console.log('Recipes:', recipes);
-
-
-    } catch (error) {
-      console.error("Error fetching recipes:", error);
-    }
+  const handleSelectChange = (selectedOptions) => {
+    const selectedValues = selectedOptions.map(option => ({
+      id: option.value,
+      name: option.label,
+    }));
+    setSelectedIngredients(selectedValues);
   };
 
   return (
@@ -44,10 +34,10 @@ const Searchbar = ({ onRecipesFetched }) => {
         isMulti
         cacheOptions
         loadOptions={loadOptions}
+        value={selectedIngredients.map(ingredient => ({ value: ingredient.id, label: ingredient.name }))}
         onChange={handleSelectChange}
       />
     </Container>
-
   );
 };
 

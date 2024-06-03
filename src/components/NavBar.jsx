@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
-
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-
 import Searchbar from './Searchbar';
 import "../App.css";
+import Home from '../pages/Home'; // Ensure you import Home component
 
-function NavBar({ token, setToken, setSearchResults }) {
+function NavBar({ token, setToken }) {
   const [userProfile, setUserProfile] = useState("");
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
   const handleRecipesFetched = (fetchedRecipes) => {
     setSearchResults(fetchedRecipes);
@@ -31,9 +32,26 @@ function NavBar({ token, setToken, setSearchResults }) {
       } catch (error) {
         console.log("Error caught when fetching users profile from api", error);
       }
-    }
+    };
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    const fetchRecipesByIngredients = async () => {
+      if (selectedIngredients.length > 0) {
+        try {
+          const ingredientIds = selectedIngredients.map(ingredient => ingredient.id).join(',');
+          const response = await fetch(`/api/recipes/byIngredient/${ingredientIds}`);
+          const recipes = await response.json();
+          handleRecipesFetched(recipes);
+        } catch (error) {
+          console.error('Error fetching recipes:', error);
+        }
+      }
+    };
+
+    fetchRecipesByIngredients();
+  }, [selectedIngredients]);
 
   return (
     <>
@@ -55,7 +73,8 @@ function NavBar({ token, setToken, setSearchResults }) {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                   <Searchbar
-                    onRecipesFetched={handleRecipesFetched}
+                    selectedIngredients={selectedIngredients}
+                    setSelectedIngredients={setSelectedIngredients}
                     type="search"
                     placeholder="Search"
                     className="me-2"
@@ -102,7 +121,8 @@ function NavBar({ token, setToken, setSearchResults }) {
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                   <Searchbar
-                    onRecipesFetched={handleRecipesFetched}
+                    selectedIngredients={selectedIngredients}
+                    setSelectedIngredients={setSelectedIngredients}
                     type="search"
                     placeholder="Search"
                     className="me-2"
@@ -117,7 +137,13 @@ function NavBar({ token, setToken, setSearchResults }) {
           )}
         </Navbar>
       ))}
-
+      <Home
+        token={token}
+        searchResults={searchResults}
+        isAdmin={false}
+        selectedIngredients={selectedIngredients}
+        setSelectedIngredients={setSelectedIngredients}
+      />
     </>
   );
 }
