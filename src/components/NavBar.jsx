@@ -8,14 +8,12 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import Searchbar from './Searchbar';
 import "../App.css";
 
-function NavBar({ token, setToken }) {
+function NavBar({ token, setToken, selectedIngredients, setSelectedIngredients, setSearchResults }) { 
   const [userProfile, setUserProfile] = useState("");
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
   const handleRecipesFetched = (fetchedRecipes) => {
-    setSearchResults(fetchedRecipes);
+    setSearchResults(fetchedRecipes); 
   };
 
   useEffect(() => {
@@ -39,11 +37,12 @@ function NavBar({ token, setToken }) {
 
   useEffect(() => {
     const fetchRecipesByIngredients = async () => {
-      if (selectedIngredients.length > 0) {
+      if (selectedIngredients.length > 0) { 
         try {
-          const ingredientIds = selectedIngredients.map(ingredient => ingredient.id).join(',');
+          const ingredientIds = selectedIngredients.map(ingredient => ingredient.id).join(','); 
           const response = await fetch(`/api/recipes/byIngredient/${ingredientIds}`);
           const recipes = await response.json();
+          console.log('Navbar search result', recipes);
           handleRecipesFetched(recipes);
         } catch (error) {
           console.error('Error fetching recipes:', error);
@@ -55,7 +54,7 @@ function NavBar({ token, setToken }) {
     };
 
     fetchRecipesByIngredients();
-  }, [selectedIngredients]);
+  }, [selectedIngredients]); 
 
   const handleLogout = () => {
     setToken("");
@@ -81,8 +80,8 @@ function NavBar({ token, setToken }) {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Searchbar
-                selectedIngredients={selectedIngredients}
-                setSelectedIngredients={setSelectedIngredients}
+                selectedIngredients={selectedIngredients} 
+                setSelectedIngredients={setSelectedIngredients} 
                 type="search"
                 placeholder="Search"
                 className="me-2"

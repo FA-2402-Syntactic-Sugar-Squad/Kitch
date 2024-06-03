@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import axios from 'axios';
+import "../App.css";
 
 import "../App.css";
 
@@ -19,9 +20,27 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
       } catch (error) {
         console.error("Error when trying to fetch all recipes", error);
       }
-    }
+    };
     fetchAllRecipes();
   }, []);
+
+
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      setRecipes(searchResults); 
+    } else {
+      const fetchAllRecipes = async () => {
+        try {
+          const result = await fetch(`/api/recipes/`);
+          const recipeResult = await result.json();
+          setRecipes(recipeResult);
+        } catch (error) {
+          console.error("Error when trying to fetch all recipes", error);
+        }
+      };
+      fetchAllRecipes(); 
+    }
+  }, [searchResults]);
 
 
   const handleClick = (recipe) => {
@@ -56,13 +75,13 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
       See details
     </Tooltip>
   );
-  //Button handlers end
 
-  const recipesToDisplay = searchResults.length > 0 ? searchResults : recipes;
 
-  if (!recipes) {
-    return <h2>Loading..</h2>
-  };
+  const recipesToDisplay = recipes; 
+
+  if (!recipes.length) {
+    return <h2>Loading..</h2>;
+  }
 
   return (
     <>
@@ -76,11 +95,13 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
             overlay={renderTooltip}
           >
             <Card style={{ width: '19rem' }} onClick={() => handleClick(curRecipe)} >
-              <Card.Img variant="top" src={curRecipe.imageurl} className="recipe-img"/>
+
+              <Card.Img variant="top" src={curRecipe.imageurl} className="recipe-img" />
               <Card.Body>
                 <Card.Title>{curRecipe.title}</Card.Title>
                 {isAdmin && (
-                  <Button variant="warning" onClick={() => handleEdit(curRecipe.id)}>Edit</Button>
+                  <Button variant="warning" onClick={(e) => {e.stopPropagation(); handleEdit(curRecipe.id);}}>Edit</Button>
+
                 )}
               </Card.Body>
             </Card>

@@ -3,7 +3,7 @@ import Recipes from '../components/Recipes';
 import Ingredients from '../components/Ingredients';
 import RecipeDetails from '../components/RecipeDetails';
 import Stack from 'react-bootstrap/Stack';
-import '../styling/Home_Register.css'; // Import the custom CSS
+import '../styling/Home_Register.css'; 
 
 const Home = ({ token, searchResults, isAdmin, selectedIngredients, setSelectedIngredients }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
