@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-import './Ingredients.css'; 
+import '../styling/Ingredients.css'; 
 
 const Ingredients = ({ selectedIngredients = [], setSelectedIngredients }) => {
   const [ingredients, setIngredients] = useState([]);
