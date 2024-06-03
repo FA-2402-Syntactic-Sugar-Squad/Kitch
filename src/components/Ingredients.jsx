@@ -32,21 +32,35 @@ const Ingredients = ({ selectedIngredients = [], setSelectedIngredients }) => {
     }
   };
 
+  const groupedIngredients = ingredients.reduce((groups, ingredient) => {
+    const category = ingredient.category || 'Uncategorized';
+    if (!groups[category]) {
+      groups[category] = [];
+    }
+    groups[category].push(ingredient);
+    return groups;
+  }, {});
+
   return (
     <Container>
       <h2>All Ingredients</h2>
-      <div className="ingredients-container">
-        {ingredients.map(ingredient => (
-          <Button
-            key={ingredient.id}
-            variant={selectedIngredients.some(selected => selected.id === ingredient.id) ? 'primary' : 'outline-primary'}
-            className="ingredient-button"
-            onClick={() => handleIngredientClick(ingredient)}
-          >
-            {ingredient.name}
-          </Button>
-        ))}
-      </div>
+      {Object.keys(groupedIngredients).map(category => (
+        <div key={category} className="ingredient-category">
+          <h3>{category}</h3>
+          <div className="ingredients-container">
+            {groupedIngredients[category].map(ingredient => (
+              <Button
+                key={ingredient.id}
+                variant={selectedIngredients.some(selected => selected.id === ingredient.id) ? 'primary' : 'outline-primary'}
+                className="ingredient-button"
+                onClick={() => handleIngredientClick(ingredient)}
+              >
+                {ingredient.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+      ))}
     </Container>
   );
 };

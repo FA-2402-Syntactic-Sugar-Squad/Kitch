@@ -1,3 +1,7 @@
+.ingredient-category {
+  margin-bottom: 5px;
+}
+
 .ingredients-container {
   display: flex;
   flex-wrap: wrap;
@@ -5,7 +9,7 @@
 }
 
 .ingredient-button {
-  font-size: 10px;
-  padding: 2px 4px;
   margin: 2px;
+  padding: 2px 4px;
+  font-size: 8px;
 }
