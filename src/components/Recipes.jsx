@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
@@ -13,7 +12,6 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
         const result = await fetch(`/api/recipes/`);
         const recipeResult = await result.json();
         setRecipes(recipeResult);
-        //console.log(recipes);
       } catch (error) {
         console.error("Error when trying to fetch all recipes", error);
       }
@@ -21,7 +19,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
     fetchAllRecipes();
   }, []);
 
-  //Button handlers start
+  
   const handleClick = (recipe) => {
     onRecipeSelect(recipe);
   };
@@ -44,7 +42,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
       console.log('Error when trying to update image on front end.', error);
     }
   };
-  //Button handlers end
+
 
   const recipesToDisplay = searchResults.length > 0 ? searchResults : recipes;
 
@@ -55,44 +53,35 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
   return (
     <>
       <h3>Recipes</h3>
-      {/* DISPLAY ALL RECIPES ON Home Page */}
-      {token ? (
-        <>
-          {recipesToDisplay.map((curRecipe) => {
-            return (
-              <Card style={{ width: '18rem' }} key={curRecipe.id}>
-                <Card.Img variant="top" src={curRecipe.imageurl} />
-                <Card.Body>
-                  <Card.Title>{curRecipe.title}</Card.Title>
-                  <Button variant="primary" onClick={() => handleClick(curRecipe)}>See Recipe</Button>
-                  {isAdmin && (
-                    <Button variant="warning" onClick={() => handleEdit(curRecipe.id)}>Edit</Button>
-                  )}
-                </Card.Body>
-              </Card >
-            )
-          })}
-        </>
+      {recipesToDisplay.length > 0 ? (
+        recipesToDisplay.map((curRecipe) => {
+          return (
+            <Card style={{ width: '18rem' }} key={curRecipe.id}>
+              <Card.Img variant="top" src={curRecipe.imageurl} />
+              <Card.Body>
+                <Card.Title>{curRecipe.title}</Card.Title>
+                {token ? (
+                  <>
+                    <Button variant="primary" onClick={() => handleClick(curRecipe)}>See Recipe</Button>
+                    {isAdmin && (
+                      <Button variant="warning" onClick={() => handleEdit(curRecipe.id)}>Edit</Button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Card.Text>Must be logged in to see details.</Card.Text>
+                    <Button variant="primary">See Recipe</Button>
+                  </>
+                )}
+              </Card.Body>
+            </Card>
+          );
+        })
       ) : (
-        <>
-          {recipesToDisplay.map((curRecipe) => {
-            return (
-              <Card style={{ width: '18rem' }} key={curRecipe.id}>
-                <Card.Img variant="top" src={curRecipe.imageurl} />
-                <Card.Body>
-                  <Card.Title>{curRecipe.title}</Card.Title>
-                  <Card.Text>
-                    Must be logged in to see details.
-                  </Card.Text>
-                  <Button variant="primary">See Recipe</Button>
-                </Card.Body>
-              </Card >
-            )
-          })}
-        </>
+        <p>No recipes found.</p>
       )}
     </>
-  )
+  );
 }
 
 export default Recipes;

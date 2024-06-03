@@ -16,8 +16,8 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
   const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
-    setIsFavorite(false); // Reset isFavorite state when recipe changes
-    setReviews(recipe.ratingsAndReviews || []); //initializing the state
+    setIsFavorite(false); 
+    setReviews(recipe.ratingsAndReviews || []); 
     calculateAverageRating(recipe.ratingsAndReviews);
   }, [recipe]);
 
