@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -6,12 +7,12 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Searchbar from './Searchbar';
 import "../App.css";
-import Home from '../pages/Home'; // Ensure you import Home component
 
 function NavBar({ token, setToken }) {
   const [userProfile, setUserProfile] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate();
 
   const handleRecipesFetched = (fetchedRecipes) => {
     setSearchResults(fetchedRecipes);
@@ -56,97 +57,64 @@ function NavBar({ token, setToken }) {
     fetchRecipesByIngredients();
   }, [selectedIngredients]);
 
+  const handleLogout = () => {
+    setToken("");
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   return (
     <>
-      {['xl'].map((expand) => (
-        <Navbar key={expand} expand={expand} className="bg-body-tertiary mb-3" sticky="top">
-          {token ? (
-            <Container fluid>
-              <Navbar.Brand href="/">Kitch</Navbar.Brand>
-              <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
-              <Navbar.Offcanvas
-                id={`offcanvasNavbar-expand-${expand}`}
-                aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
-                placement="end"
-              >
-                <Offcanvas.Header closeButton>
-                  <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${expand}`}>
-                    Welcome {userProfile.username}!
-                  </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                  <Searchbar
-                    selectedIngredients={selectedIngredients}
-                    setSelectedIngredients={setSelectedIngredients}
-                    type="search"
-                    placeholder="Search"
-                    className="me-2"
-                    aria-label="Search" />
-                  <Nav className="justify-content-end flex-grow-1 pe-3">
-                    <NavDropdown
-                      title="Account"
-                      id={`offcanvasNavbarDropdown-expand-${expand}`}
-                    >
-                      <NavDropdown.Item href="/myProfile">
+      <Navbar expand="xl" className="bg-body-tertiary mb-3" sticky="top">
+        <Container fluid>
+          <Navbar.Brand as={Link} to="/">Kitch</Navbar.Brand>
+          <Navbar.Toggle aria-controls="offcanvasNavbar" />
+          <Navbar.Offcanvas
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+            placement="end"
+          >
+            <Offcanvas.Header closeButton>
+              <Offcanvas.Title id="offcanvasNavbarLabel">
+                {token ? `Welcome ${userProfile.username}!` : "Hello World!"}
+              </Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+              <Searchbar
+                selectedIngredients={selectedIngredients}
+                setSelectedIngredients={setSelectedIngredients}
+                type="search"
+                placeholder="Search"
+                className="me-2"
+                aria-label="Search" />
+              <Nav className="justify-content-end flex-grow-1 pe-3">
+                {token ? (
+                  <>
+                    <NavDropdown title="Account" id="offcanvasNavbarDropdown">
+                      <NavDropdown.Item as={Link} to="/myProfile">
                         My Profile
                       </NavDropdown.Item>
                       <NavDropdown.Item href="#action4">
                         Saved Recipes
                       </NavDropdown.Item>
                       <NavDropdown.Divider />
-                      <NavDropdown.Item onClick={() => {
-                        setToken("");
-                        localStorage.setItem("token", "");
-                      }}
-                        to="/">
+                      <NavDropdown.Item onClick={handleLogout}>
                         Logout
                       </NavDropdown.Item>
                     </NavDropdown>
-                    <Nav.Link href="/">Home</Nav.Link>
-                    <Nav.Link href="#action2"></Nav.Link>
-                  </Nav>
-                </Offcanvas.Body>
-              </Navbar.Offcanvas>
-            </Container>
-          ) : (
-            <Container fluid>
-              <Navbar.Brand href="/">Kitch</Navbar.Brand>
-              <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
-              <Navbar.Offcanvas
-                id={`offcanvasNavbar-expand-${expand}`}
-                aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
-                placement="end"
-              >
-                <Offcanvas.Header closeButton>
-                  <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${expand}`}>
-                    Hello World!
-                  </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                  <Searchbar
-                    selectedIngredients={selectedIngredients}
-                    setSelectedIngredients={setSelectedIngredients}
-                    type="search"
-                    placeholder="Search"
-                    className="me-2"
-                    aria-label="Search" />
-                  <Nav className="justify-content-end flex-grow-1 pe-3">
-                    <Nav.Link href="/">Home</Nav.Link>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                  </Nav>
-                </Offcanvas.Body>
-              </Navbar.Offcanvas>
-            </Container>
-          )}
-        </Navbar>
-      ))}
-      <Home
-        token={token}
-        searchResults={searchResults}
-        isAdmin={false}
-        selectedIngredients={selectedIngredients}
-        setSelectedIngredients={setSelectedIngredients}
-      />
+                    <Nav.Link as={Link} to="/">Home</Nav.Link>
+                  </>
+                ) : (
+                  <>
+                    <Nav.Link as={Link} to="/">Home</Nav.Link>
+                    <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                  </>
+                )}
+              </Nav>
+            </Offcanvas.Body>
+          </Navbar.Offcanvas>
+        </Container>
+      </Navbar>
     </>
   );
 }
