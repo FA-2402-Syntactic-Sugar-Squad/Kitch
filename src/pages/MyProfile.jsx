@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import React from 'react';
 import { Container, Row, Col, Card, Button, Image } from 'react-bootstrap';
-import SavedRecipes from "./SavedRecipes";
+import SavedRecipes from "../components/SavedRecipes";
 import '../styling/MyProfile.css';
 
 
