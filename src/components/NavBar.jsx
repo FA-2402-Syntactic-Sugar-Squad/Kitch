@@ -47,6 +47,9 @@ function NavBar({ token, setToken }) {
         } catch (error) {
           console.error('Error fetching recipes:', error);
         }
+      } else {
+        // Clear the search results if no ingredients are selected
+        handleRecipesFetched([]);
       }
     };
 

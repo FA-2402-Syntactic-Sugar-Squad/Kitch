@@ -19,7 +19,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
     fetchAllRecipes();
   }, []);
 
-  //Button handlers start
+  
   const handleClick = (recipe) => {
     onRecipeSelect(recipe);
   };
@@ -42,7 +42,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
       console.log('Error when trying to update image on front end.', error);
     }
   };
-  //Button handlers end
+
 
   const recipesToDisplay = searchResults.length > 0 ? searchResults : recipes;
 
