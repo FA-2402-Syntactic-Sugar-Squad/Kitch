@@ -6,6 +6,7 @@ import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
 import MyProfile from './pages/MyProfile.jsx';
 import './App.css';
+import SavedRecipes from './components/SavedRecipes.jsx';
 
 function App() {
   const [token, setToken] = useState("");
@@ -34,6 +35,7 @@ function App() {
         <Route path="/register" element={<Register token={token} setToken={setToken} />} />
         <Route path="/login" element={<Login token={token} setToken={setToken} />} />
         <Route path="/myProfile" element={<MyProfile token={token} />} />
+        <Route path="/saved-recipes" element={<div>My saved recipes</div>} />
       </Routes>
     </>
   );
