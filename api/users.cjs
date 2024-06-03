@@ -15,8 +15,10 @@ usersRouter.get("/", async (req, res) => {
 usersRouter.get("/profile", verifyToken, async (req, res) => {
   try {
     const id = req.user.id;
+    console.log("Fetched profile data:", id);
 
     const fetchProfile = await getUserInfo(id);
+    console.log("Fetched profile data:", fetchProfile);
     if (!fetchProfile) {
       return res.status(404).send({ message: "User not found" });
     }
@@ -32,9 +34,16 @@ usersRouter.put("/preferences", verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const newPreferences = req.body;
+    console.log("Updating preferences for user ID:", userId, "with data:", newPreferences);
 
     const updatedPreferences = await updateUserPreferences(userId, newPreferences);
-    res.send(updatedPreferences);
+    console.log("Updated preferences data:", updatedPreferences);
+
+    if (updatedPreferences) {
+      res.json(updatedPreferences); // Ensure a JSON response is sent
+    } else {
+      res.status(204).json({}); // Send an empty JSON object if no content
+    }
   } catch (error) {
     console.log("Error caught when updating preferences", error);
   }

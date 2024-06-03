@@ -7,23 +7,39 @@ import '../styling/MyProfile.css';
 
 
 const MyProfile = ({ token }) => {
-  const [user, setUser] = useState("");
-  const [preferences, setPreferences] = useState({});
+  const [user, setUser] = useState(null);
+  const [preferences, setPreferences] = useState({
+    glutenFree: false,
+    ketogenic: false,
+    lactoVegetarian: false,
+    ovoVegetarian: false,
+    vegan: false,
+    pescetarian: false,
+    paleo: false,
+    primal: false,
+    lowFODMAP: false,
+    whole30: false,
+  });
 
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
+      console.log("Token for fetching profile:", token);
       try {
-        const response = await fetch(`api/users/profile`, {
+        const response = await fetch(`/api/users/profile`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`
           }
         });
+        console.log("Response status for profile fetch:", response.status);
         const userProfileResult = await response.json();
+        console.log("Fetched user profile:", userProfileResult);
         setUser(userProfileResult);
-        const filteredPreferences = (({ id, userId, ...rest }) => rest)(userProfileResult.preferences[0]);
-        setPreferences(filteredPreferences);
+        if (userProfileResult.preferences && userProfileResult.preferences[0]) {
+          const filteredPreferences = (({ id, userId, ...rest }) => rest)(userProfileResult.preferences[0]);
+          setPreferences(filteredPreferences);
+        }
       } catch (error) {
         console.log("Error caught when fetching users profile from api", error);
       }
@@ -34,8 +50,10 @@ const MyProfile = ({ token }) => {
   const handlePreferenceChange = async (pref) => {
     const updatedPreferences = { ...preferences, [pref]: !preferences[pref] };
     setPreferences(updatedPreferences);
+    console.log("Updated preferences to be sent:", updatedPreferences);
 
     const token = localStorage.getItem("token");
+    console.log("Token for updating preferences:", token);
     try {
       const response = await fetch(`/api/users/preferences`, {
         method: "PUT",
@@ -45,7 +63,11 @@ const MyProfile = ({ token }) => {
         },
         body: JSON.stringify(updatedPreferences) //only send preferences
       });
-      const updatedPreferencesFromServer = await response.json();
+      console.log("Response status for preferences update:", response.status);
+      const rawResponse = await response.text();
+      console.log("Raw response body:", rawResponse);
+      
+      const updatedPreferencesFromServer = JSON.parse(rawResponse);
       const filteredPreferences = (({ id, userId, ...rest }) => rest)(updatedPreferencesFromServer);
       setPreferences(filteredPreferences);
     } catch (error) {
@@ -61,8 +83,8 @@ const MyProfile = ({ token }) => {
     <Container>
       <Row className="mt-4">
         <Col md={3}>
-          <Image src="https://static.vecteezy.com/system/resources/previews/006/331/115/non_2x/chef-hat-restaurant-kitchen-line-style-icon-free-free-vector.jpg" 
-          roundedCircle fluid thumbnail />
+          <Image src="https://static.vecteezy.com/system/resources/previews/006/331/115/non_2x/chef-hat-restaurant-kitchen-line-style-icon-free-free-vector.jpg"
+            id="profile-pic" fluid thumbnail />
           <Card className="mt-3">
             <Card.Body>
               <Card.Title> {user.username}'s Profile</Card.Title>
@@ -88,7 +110,7 @@ const MyProfile = ({ token }) => {
                     onClick={() => handlePreferenceChange(pref)}
                     className="m-1"
                   >
-                    {pref.replace(/([A-Z])/g, '$1').trim()}
+                    {pref.replace(/([A-Z])/g, ' $1').trim()}
                   </Button>
                 ))}
               </div>
@@ -97,7 +119,7 @@ const MyProfile = ({ token }) => {
           <Card>
             <Card.Body>
               <Card.Title>My Favorite Recipes</Card.Title>
-              {user && <SavedRecipes userId={user.id}/>}
+              {user && <SavedRecipes userId={user.id} />}
             </Card.Body>
           </Card>
         </Col>
