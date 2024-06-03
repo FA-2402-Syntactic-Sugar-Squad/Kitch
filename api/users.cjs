@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 const { getUserInfo, updateUserPreferences, updateUserPassword, updateRating, updateReview, viewAllRatingAndReviews, deleteRatingAndReview, saveARecipe, viewAllSavedRecipes, checkSingleSavedRecipe } = require("../db/index.cjs");
 const { verifyToken } = require("../auth/middleware.cjs");
 const express = require("express");
-const bcrypt = require("bcryptjs");
 const usersRouter = express.Router();
 
 //PATH: api/users/
