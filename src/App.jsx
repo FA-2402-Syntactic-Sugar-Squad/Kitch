@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route } from "react-router-dom";
 import NavBar from './components/NavBar.jsx';
 import Home from './pages/Home.jsx';
@@ -11,6 +11,7 @@ function App() {
   const [token, setToken] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [selectedIngredients, setSelectedIngredients] = useState([]); 
 
   useEffect(() => {
     try {
@@ -27,10 +28,26 @@ function App() {
 
   return (
     <>
-      <NavBar token={token} setToken={setToken} setSearchResults={setSearchResults} />
+      <NavBar 
+        token={token} 
+        setToken={setToken} 
+        setSearchResults={setSearchResults} 
+        selectedIngredients={selectedIngredients} 
+        setSelectedIngredients={setSelectedIngredients} 
+      />
 
       <Routes>
-        <Route path="/" element={<Home token={token} searchResults={searchResults} isAdmin={isAdmin} />} />
+        <Route 
+          path="/" 
+          element={
+            <Home 
+              token={token} 
+              searchResults={searchResults} 
+              isAdmin={isAdmin} 
+              selectedIngredients={selectedIngredients} 
+              setSelectedIngredients={setSelectedIngredients} 
+            />} 
+        />
         <Route path="/register" element={<Register token={token} setToken={setToken} />} />
         <Route path="/login" element={<Login token={token} setToken={setToken} />} />
         <Route path="/myProfile" element={<MyProfile token={token} />} />
