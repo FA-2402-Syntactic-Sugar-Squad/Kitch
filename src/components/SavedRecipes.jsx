@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
-import RecipeDetails from "../components/RecipeDetails.jsx";
+import RecipeDetails from "./RecipeDetails.jsx";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-const SavedRecipes = ({ userId }) => {
+const SavedRecipes = ({ userId, token }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const token = localStorage.getItem("token");
+  
 
   useEffect(() => {
     const fetchSavedRecipes = async () => {

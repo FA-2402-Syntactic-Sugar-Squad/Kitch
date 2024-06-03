@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import SavedRecipes from "./SavedRecipes";
+import SavedRecipes from "../components/SavedRecipes";
 
 const MyProfile = ({ token }) => {
   const [userProfile, setUserProfile] = useState("");
