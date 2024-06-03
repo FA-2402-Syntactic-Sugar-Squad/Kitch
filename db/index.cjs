@@ -119,6 +119,35 @@ const updateUserPreferences = async (userId, newPreferences) => {
   }
 };
 
+const updateUserPassword = async (userId, currentPassword, newPassword) => {
+  try {
+    const user = await prisma.users.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Verify current password
+    const isPasswordValid = bcrypt.compareSync(currentPassword, user.password);
+    if (!isPasswordValid) {
+      throw new Error("Current password is incorrect");
+    }
+
+    // Hash the new password
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+    const updatedUser = await prisma.users.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return updatedUser;
+  } catch (error) {
+    console.log("Error caught when trying to update user password", error);
+    throw error;
+  }
+};
+
 //user: update ratings on saved recipes
 const updateRating = async (recipeId, userId, rating) => {
   try {
@@ -301,6 +330,7 @@ module.exports = {
   adminPrivUpdateRecipeImageUrl,
   getUserInfo,
   updateUserPreferences,
+  updateUserPassword,
   updateRating,
   updateReview,
   viewAllRatingAndReviews,

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 
 import React from 'react';
-import { Container, Row, Col, Card, Button, Image } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Image, Form } from 'react-bootstrap';
 import SavedRecipes from "../components/SavedRecipes";
 import '../styling/MyProfile.css';
 
 
 const MyProfile = ({ token }) => {
   const [user, setUser] = useState(null);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [preferences, setPreferences] = useState({
     glutenFree: false,
     ketogenic: false,
@@ -66,7 +68,7 @@ const MyProfile = ({ token }) => {
       console.log("Response status for preferences update:", response.status);
       const rawResponse = await response.text();
       console.log("Raw response body:", rawResponse);
-      
+
       const updatedPreferencesFromServer = JSON.parse(rawResponse);
       const filteredPreferences = (({ id, userId, ...rest }) => rest)(updatedPreferencesFromServer);
       setPreferences(filteredPreferences);
@@ -74,6 +76,32 @@ const MyProfile = ({ token }) => {
       console.log("Error caught when fetching and updating preferences", error);
     }
   }
+
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`/api/users/update-password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      console.log("Response status for password update:", response.status);
+      if (response.status === 200) {
+        alert("Password updated successfully!");
+        setCurrentPassword('');
+        setNewPassword('');
+      } else {
+        const result = await response.json();
+        alert(`Password update failed: ${result.message}`);
+      }
+    } catch (error) {
+      console.log("Error caught when updating password", error);
+    }
+  };
 
   if (!user) {
     return <p>Loading...</p>;
@@ -89,6 +117,34 @@ const MyProfile = ({ token }) => {
             <Card.Body>
               <Card.Title> {user.username}'s Profile</Card.Title>
               <Card.Text>Email: {user.email}</Card.Text>
+            </Card.Body>
+          </Card>
+          <Card className="mt-3">
+            <Card.Body>
+              <Card.Title>Update Password</Card.Title>
+              <Form onSubmit={handlePasswordUpdate}>
+                <Form.Group controlId="formCurrentPassword">
+                  <Form.Label>Current Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Enter current password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
+                </Form.Group>
+                <Form.Group controlId="formNewPassword">
+                  <Form.Label>New Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit" className="mt-3">
+                  Update Password
+                </Button>
+              </Form>
             </Card.Body>
           </Card>
         </Col>
