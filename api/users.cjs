@@ -1,7 +1,7 @@
 //imports
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { getUserInfo, updateUserPreferences, updateRating, updateReview, viewAllRatingAndReviews, deleteRatingAndReview, saveARecipe, viewAllSavedRecipes, checkSingleSavedRecipe } = require("../db/index.cjs");
+const { getUserInfo, updateUserPreferences, updateUserPassword, updateRating, updateReview, viewAllRatingAndReviews, deleteRatingAndReview, saveARecipe, viewAllSavedRecipes, checkSingleSavedRecipe } = require("../db/index.cjs");
 const { verifyToken } = require("../auth/middleware.cjs");
 const express = require("express");
 const usersRouter = express.Router();
@@ -48,6 +48,22 @@ usersRouter.put("/preferences", verifyToken, async (req, res) => {
     console.log("Error caught when updating preferences", error);
   }
 });
+
+//PUT: update password
+usersRouter.put("/update-password", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    const updatedUser = await updateUserPassword(userId, currentPassword, newPassword);
+
+    res.status(200).send({ message: "Password updated successfully" });
+  } catch (error) {
+    console.log("Error caught when updating password", error);
+    res.status(400).send({ message: error.message });
+  }
+});
+
 
 usersRouter.put("/update-rating/:id", verifyToken, async (req, res) => {
   try {
