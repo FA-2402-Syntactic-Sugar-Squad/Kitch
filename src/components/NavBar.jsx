@@ -64,9 +64,9 @@ function NavBar({ token, setToken, selectedIngredients, setSelectedIngredients, 
 
   return (
     <>
-      <Navbar expand="xl" className="bg-body-tertiary mb-3" sticky="top">
+      <Navbar expand="xl" sticky="top" id="NavBar">
         <Container fluid>
-          <Navbar.Brand as={Link} to="/">Kitch</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/"><strong>Kitch</strong></Navbar.Brand>
           <Navbar.Toggle aria-controls="offcanvasNavbar" />
           <Navbar.Offcanvas
             id="offcanvasNavbar"

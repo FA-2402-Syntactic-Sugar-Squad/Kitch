@@ -43,10 +43,10 @@ const Ingredients = ({ selectedIngredients = [], setSelectedIngredients }) => {
 
   return (
     <Container>
-      <h2>All Ingredients</h2>
+      <h3>Pantry Items</h3>
       {Object.keys(groupedIngredients).map(category => (
         <div key={category} className="ingredient-category">
-          <h3>{category}</h3>
+          <h5>{category}</h5>
           <div className="ingredients-container">
             {groupedIngredients[category].map(ingredient => (
               <Button

@@ -6,8 +6,6 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import axios from 'axios';
 import "../App.css";
 
-import "../App.css";
-
 const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
   const [recipes, setRecipes] = useState([]);
 
@@ -94,7 +92,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
             delay={{ show: 250, hide: 400 }}
             overlay={renderTooltip}
           >
-            <Card style={{ width: '19rem' }} onClick={() => handleClick(curRecipe)} >
+            <Card style={{ width: '19rem' }} onClick={() => handleClick(curRecipe)} id="recipe">
 
               <Card.Img variant="top" src={curRecipe.imageurl} className="recipe-img" />
               <Card.Body>

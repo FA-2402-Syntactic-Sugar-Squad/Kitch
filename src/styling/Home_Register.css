@@ -43,7 +43,7 @@ label {
   width: 350px; 
   overflow-y: auto; 
   height: 100%;
-  background-color: #f0f0f0; 
+  background-color: #F4F4F4; 
 }
 
 .center-section {
@@ -65,4 +65,8 @@ label {
 
 .p-2 {
   padding: 1rem; 
+}
+
+#recipes-right{
+  margin-right: 1%;
 }
