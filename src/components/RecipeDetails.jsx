@@ -187,7 +187,7 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
                 {filteredReviews.length > 0 ? (
                   filteredReviews.map((review) => (
                     <div key={review.id} id="reviews">
-                      Review: {review.reviewMsg}{" "}
+                      {review.reviewMsg}{" "}
                       {isAdmin && review.reviewMsg && (
                         <Button
                           id="review-btn"

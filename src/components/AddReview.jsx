@@ -52,21 +52,22 @@ const AddReview = ({ recipeId, onReviewAdded }) => {
   };
 
   return (
-    <div>
-      <InputGroup className="mb-3" onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
+      <InputGroup className="mb-3" >
         <Form.Control
+          as="textarea"
+          name="reviewMsg"
           placeholder="Add your review"
           aria-label="Add your review"
-          aria-describedby="basic-addon2"
-          value={reviewData.reviewMsg}
-          onChange={handleInputChange}
           required
+          onChange={handleInputChange}
+          value={reviewData.reviewMsg} 
         />
-        <Button variant="outline-secondary" id="button-addon2" type="submit">
+        <Button variant="outline-secondary" id="button-addon2" type="submit" >
           Submit
         </Button>
       </InputGroup>
-    </div>
+    </Form>
   );
 };
 

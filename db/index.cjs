@@ -309,12 +309,15 @@ const createRatingForRecipe = async (recipeId, rating) => {
 };
 
 // Function to create a review for a recipe
-const createReviewForRecipe = async (recipeId, reviewMsg) => {
+const createReviewForRecipe = async (recipeId, reviewMsg, rating = 0) => {
   try {
     const createdReview = await prisma.ratingsAndReviews.create({
       data: {
-        recipeId: recipeId,
         reviewMsg: reviewMsg,
+        rating: rating,
+        recipe: {
+          connect: {id: recipeId}
+        }
       },
     });
     return createdReview;
