@@ -1,6 +1,7 @@
-.profile-pic {
+#profile-pic {
+  border-radius: 50%;
   width: 100%;
-  height: auto;
+  height: 25%;
 }
 
 .card-title {

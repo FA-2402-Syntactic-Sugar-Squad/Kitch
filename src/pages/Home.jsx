@@ -34,21 +34,21 @@ const Home = ({ token, searchResults, isAdmin, selectedIngredients, setSelectedI
               isAdmin={isAdmin}
             />
           ) : (
-            <div class="noodles">
-              <div class="cap right"></div>
-              <div class="cap back"></div>
-              <div class="side right"></div>
-              <div class="side back"></div>
-              <div class="noodle noodles-1"></div>
-              <div class="noodle noodles-2"></div>
-              <div class="noodle noodles-3"></div>
-              <div class="side left"></div>
-              <div class="side front">
-                <div class="eyes"></div>
-                <div class="mouth"></div>
+            <div className="noodles">
+              <div className="cap right"></div>
+              <div className="cap back"></div>
+              <div className="side right"></div>
+              <div className="side back"></div>
+              <div className="noodle noodles-1"></div>
+              <div className="noodle noodles-2"></div>
+              <div className="noodle noodles-3"></div>
+              <div className="side left"></div>
+              <div className="side front">
+                <div className="eyes"></div>
+                <div className="mouth"></div>
               </div>
-              <div class="cap left"></div>
-              <div class="cap front"></div>
+              <div className="cap left"></div>
+              <div className="cap front"></div>
             </div>
           )}
         </div>

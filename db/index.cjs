@@ -5,39 +5,39 @@ const prisma = new PrismaClient();
 // *** ATTN: ADMIN FUNCTIONS START *** \\
 //admin: get all ratings and reviews
 const adminPrivRatingsAndReviews = async () => {
-  try{
+  try {
     const allUserRatingsAndReviews = await prisma.ratingsAndReviews.findMany({
       include: {
         recipe: true, //including related recipe data
       }
     });
     return allUserRatingsAndReviews;
-  } catch(error){
+  } catch (error) {
     console.log("Error caught when fetching everyone's rating and reviews:", error);
   }
 };
 
 //admin: delete reviews
 const adminPrivDeleteReviewMsg = async (id) => {
-  try{
+  try {
     const updatedRatingAndReview = await prisma.ratingsAndReviews.update({
-      where: {id: id},
-      data: {reviewMsg: ""}, //could not update to null since the field is not nullable
+      where: { id: id },
+      data: { reviewMsg: "" }, //could not update to null since the field is not nullable
     });
     return updatedRatingAndReview;
-  }catch(error){
+  } catch (error) {
     console.log("Error deleting review message:", error);
   }
 };
 
 const adminPrivUpdateRecipeImageUrl = async (recipeId, newImageUrl) => {
-  try{
+  try {
     const recipe = await prisma.recipes.findUnique({
       where: {
         id: recipeId,
       },
     });
-    if(!recipe){
+    if (!recipe) {
       throw new Error(`Recipe with ID ${recipeId} not found`);
     }
     const updatedRecipeImage = await prisma.recipes.update({
@@ -50,7 +50,7 @@ const adminPrivUpdateRecipeImageUrl = async (recipeId, newImageUrl) => {
     });
     console.log(`Successfully updated image URL for recipe with ID ${recipeId}.`);
     return updatedRecipeImage;
-  } catch(error){
+  } catch (error) {
     console.log("Error caught when updating an image on recipes", error);
   }
 };
@@ -59,10 +59,10 @@ const adminPrivUpdateRecipeImageUrl = async (recipeId, newImageUrl) => {
 
 // *** ATTN: USERS FUNCTIONS START *** \\
 //user: get profile
-const getUserInfo = async(id) => {
-  try{
+const getUserInfo = async (id) => {
+  try {
     const userInfo = await prisma.users.findUnique({
-      where: { id : id },
+      where: { id: id },
       select: {
         id: true,
         username: true,
@@ -72,43 +72,49 @@ const getUserInfo = async(id) => {
         isadmin: true,
       },
     });
+    console.log("Fetched user info:", userInfo);
     return userInfo;
-  }catch(error){
+  } catch (error) {
     console.log("Error caught when trying to obtain user information", error)
   }
 };
 
 //user: update preferences
-const updateUserPreferences = async(userId, newPreferences) => {
-  try{
-    const preferenceRecord = await prisma.preferences.findFirst({
+const updateUserPreferences = async (userId, newPreferences) => {
+  try {
+    let preferenceRecord = await prisma.preferences.findFirst({
       where: {
         userId: userId,
       },
     });
 
-    if(!preferenceRecord){
-      throw new Error("Preferences not found");
+    if (!preferenceRecord) {
+      // Create a new preferences record if none exists
+      preferenceRecord = await prisma.preferences.create({
+        data: { userId: userId, ...newPreferences }
+      });
+    } else {
+      // Update the existing preferences record
+      preferenceRecord = await prisma.preferences.update({
+        where: { id: preferenceRecord.id },
+        data: newPreferences,
+        select: {
+          glutenFree: true,
+          ketogenic: true,
+          lactoVegetarian: true,
+          ovoVegetarian: true,
+          vegan: true,
+          pescetarian: true,
+          paleo: true,
+          primal: true,
+          lowFODMAP: true,
+          whole30: true,
+        },
+      });
     }
-
-    const updatedPreferences = await prisma.preferences.update({
-      where: { id: preferenceRecord.id },
-      data: newPreferences,
-      select: {
-        glutenFree: true,
-        ketogenic: true,
-        lactoVegetarian: true,
-        ovoVegetarian: true,
-        vegan: true,
-        pescetarian: true,
-        paleo: true,
-        primal: true,
-        lowFODMAP: true,
-        whole30: true,
-      },
-    });
-    return updatedPreferences;
-  }catch(error){
+    console.log("Updated preferences in the database:", preferenceRecord);
+    return preferenceRecord;
+  } catch (error) {
     console.log("Error caught when trying to update user preferences", error);
   }
 };
@@ -157,11 +163,11 @@ const updateReview = async (recipeId, userId, reviewMsg) => {
 
 //user: view ratings and reviews
 const viewAllRatingAndReviews = async (id) => {
-  try{
+  try {
     const allRatingAndReviews = await prisma.users_recipes.findMany({
       where: {
         id,
-        rating: { not: null},
+        rating: { not: null },
       }, select: {
         id: true,
         rating: true,
@@ -169,15 +175,15 @@ const viewAllRatingAndReviews = async (id) => {
       }
     });
     return allRatingAndReviews;
-  }catch(error){
+  } catch (error) {
     console.log("Error caught when viewing ratings and reviews");
   }
 };
 
 //user: delete review and rating
-const deleteRatingAndReview = async(id) => {
+const deleteRatingAndReview = async (id) => {
   //limit for rating (?) - could be a front end limitation
-  try{
+  try {
     const ratingAndReviewToDelete = await prisma.users_recipes.update({
       where: {
         id: id,
@@ -187,14 +193,14 @@ const deleteRatingAndReview = async(id) => {
       }
     })
     return ratingAndReviewToDelete;
-  } catch(error){
+  } catch (error) {
     console.log("Error caught when deleting a rating and review", error);
   }
 };
 
 //user: save a recipe
 const saveARecipe = async (userId, recipeId) => {
-  try{
+  try {
     const savedRecipe = await prisma.users_recipes.create({
       data: {
         userId: userId,
@@ -203,18 +209,18 @@ const saveARecipe = async (userId, recipeId) => {
     });
     console.log("Recipe saved:", savedRecipe);
     return savedRecipe;
-  }catch(error){
+  } catch (error) {
     console.log("Error caught when saving a recipe", error);
   }
 };
 
 //user: view all saved recipes
-const viewAllSavedRecipes = async(userId) => {
-  try{
-    
+const viewAllSavedRecipes = async (userId) => {
+  try {
+
     const savedRecipes = await prisma.users_recipes.findMany({
-      where:{
-        userId:parseInt(userId),
+      where: {
+        userId: parseInt(userId),
       },
       include: {
         recipes: {
@@ -225,13 +231,13 @@ const viewAllSavedRecipes = async(userId) => {
         },
       },
     });
-    if (savedRecipes.length === 0){
+    if (savedRecipes.length === 0) {
       return [];
-    } 
-    
+    }
+
     return savedRecipes;
-    
-  }catch (error) {
+
+  } catch (error) {
     console.log("Error caught when fetching all saved recipes", error);
   }
 };
@@ -242,8 +248,8 @@ const checkSingleSavedRecipe = async (userId, id) => {
       where: {
         id,
         userId
-        },
-      });
+      },
+    });
     return savedRecipe;
   } catch (error) {
     console.log("Error caught when checking if recipe is saved", error);
@@ -289,7 +295,7 @@ const createReviewForRecipe = async (recipeId, reviewMsg) => {
 };
 // *** ATTN: RECIPES FUNCTIONS END *** \\
 
-module.exports = { 
+module.exports = {
   adminPrivRatingsAndReviews,
   adminPrivDeleteReviewMsg,
   adminPrivUpdateRecipeImageUrl,
@@ -304,4 +310,4 @@ module.exports = {
   checkSingleSavedRecipe,
   createRatingForRecipe,
   createReviewForRecipe,
- }
+}
