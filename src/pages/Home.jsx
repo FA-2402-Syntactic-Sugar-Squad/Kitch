@@ -53,7 +53,7 @@ const Home = ({ token, searchResults, isAdmin, selectedIngredients, setSelectedI
           )}
         </div>
         <div className="vr" />
-        <div className="right-section p-2">
+        <div className="right-section p-2" id="recipes-right">
           <Recipes
             token={token}
             onRecipeSelect={handleSelectedRecipe}
