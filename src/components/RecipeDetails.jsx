@@ -184,7 +184,7 @@ const RecipeDetails = ({ recipe, isAdmin, preferences }) => {
                 <strong>Servings:</strong> {recipe.servings},
                 <br></br><strong>Diet:</strong>{" "}
                 {Object.entries(recipe).map(([key, value]) => {
-                  if (value && key !== "id" && key !== "title" && key !== "instructions" && key !== "servings" && key !== "imageurl" && key !== "ratingsAndReviews") {
+                  if (value && key !== "id" && key !== "title" && key !== "instructions" && key !== "servings" && key !== "imageurl" && key !== "ratingsAndReviews" && key !== "Recipes_ingredients") {
                     return (
                       <span key={key}>
                         {key.charAt(0).toUpperCase() + key.slice(1)}, {" "}
