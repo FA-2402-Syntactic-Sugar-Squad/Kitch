@@ -5,7 +5,7 @@ const express = require('express');
 const adminPrivRouter = express.Router();
 
 const { verifyToken, requireAdmin } = require('./../auth/middleware.cjs');
-const { adminPrivRatingsAndReviews, adminPrivDeleteReviewMsg, adminPrivUpdateRecipeImageUrl } = require("../db/index.cjs");
+const { adminPrivRatingsAndReviews, adminPrivDeleteReviewMsg, adminPrivUpdateRecipeImageUrl, updateDietaryInfoForRecipe } = require("../db/index.cjs");
 
 adminPrivRouter.use(verifyToken);
 
@@ -112,6 +112,19 @@ adminPrivRouter.delete("/ingredients/:id", requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error when deleting ingredient:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+//PUT: Dietary option
+adminPrivRouter.put('/recipes/:recipeId/dietary-info', async (req, res) => {
+  try {
+    const { recipeId } = req.params;
+    const dietaryInfo = req.body;
+    const updatedRecipe = await updateDietaryInfoForRecipe(parseInt(recipeId, 10), dietaryInfo);
+    res.status(200).send(updatedRecipe);
+  } catch (error) {
+    console.error("Error caught when updating dietary information for recipe:", error);
+    res.status(500).send({ message: "Failed to update dietary information" });
   }
 });
 

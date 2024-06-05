@@ -55,6 +55,32 @@ const adminPrivUpdateRecipeImageUrl = async (recipeId, newImageUrl) => {
     console.log("Error caught when updating an image on recipes", error);
   }
 };
+
+// Function to update dietary information for a recipe
+const updateDietaryInfoForRecipe = async (recipeId, dietaryInfo) => {
+  try {
+    const updatedRecipe = await prisma.recipes.update({
+      where: { id: recipeId },
+      data: {
+        glutenFree: dietaryInfo.glutenFree ?? false,
+        ketogenic: dietaryInfo.ketogenic ?? false,
+        lactoVegetarian: dietaryInfo.lactoVegetarian ?? false,
+        ovoVegetarian: dietaryInfo.ovoVegetarian ?? false,
+        vegan: dietaryInfo.vegan ?? false,
+        pescetarian: dietaryInfo.pescetarian ?? false,
+        paleo: dietaryInfo.paleo ?? false,
+        primal: dietaryInfo.primal ?? false,
+        lowFODMAP: dietaryInfo.lowFODMAP ?? false,
+        whole30: dietaryInfo.whole30 ?? false,
+      },
+    });
+    return updatedRecipe;
+  } catch (error) {
+    console.log("Error caught when updating dietary information for recipe:", error);
+    throw error;
+  }
+};
+
 // *** ATTN: ADMIN FUNCTIONS END *** \\
 
 
@@ -332,6 +358,7 @@ module.exports = {
   adminPrivRatingsAndReviews,
   adminPrivDeleteReviewMsg,
   adminPrivUpdateRecipeImageUrl,
+  updateDietaryInfoForRecipe,
   getUserInfo,
   updateUserPreferences,
   updateUserPassword,
