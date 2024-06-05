@@ -8,7 +8,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import "../App.css";
 
-const RecipeDetails = ({ recipe, isAdmin }) => {
+const RecipeDetails = ({ recipe, isAdmin, preferences }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [userId, setUserId] = useState(null);
   const [token, setToken] = useState(null);
@@ -16,8 +16,8 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
   const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
-    setIsFavorite(false); 
-    setReviews(recipe.ratingsAndReviews || []); 
+    setIsFavorite(false);
+    setReviews(recipe.ratingsAndReviews || []);
     calculateAverageRating(recipe.ratingsAndReviews);
   }, [recipe]);
 
@@ -175,15 +175,17 @@ const RecipeDetails = ({ recipe, isAdmin }) => {
       {token ? (
         <>
           <Card style={{ width: "80rem" }}>
-            <Card.Img variant="top" src={recipe.imageurl} className="see-dets-img"/>
+            <Card.Img variant="top" src={recipe.imageurl} className="see-dets-img" />
             <Card.Body>
               <Card.Title>{recipe.title}</Card.Title>
               <StarRating rating={averageRating} onRate={handleRateRecipe} />
               <Card.Text>
                 <strong>Instructions:</strong> {recipe.instructions} <br></br>
                 <strong>Servings:</strong> {recipe.servings},
-                <br></br><strong>Diet:</strong> {recipe.diet},
-                <br></br><strong>Reviews:</strong>
+                <br></br><strong>Diet:</strong> 
+                {recipe.glutenFree && <p>Gluten Free, </p>}{recipe.ketogenic && <p>Ketogenic, </p>}{recipe.lactoVegetarian && <p>LactoVegetarian, </p>}{recipe.ovoVegetarian && <p>OvoVegetarian, </p>}{recipe.vegan && <p>Vegan, </p>}
+                {recipe.pescetarian && <p>Pescetarian, </p>}{recipe.paleo && <p>Paleo, </p>}{recipe.primal && <p>Primal, </p>}{recipe.lowFODMAP && <p>lowFODMAP, </p>}{recipe.whole30 && <p>Whole30</p>}
+                <strong>Reviews:</strong>
                 {filteredReviews.length > 0 ? (
                   filteredReviews.map((review) => (
                     <div key={review.id} id="reviews">

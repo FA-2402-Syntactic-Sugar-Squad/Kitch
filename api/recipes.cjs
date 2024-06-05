@@ -50,18 +50,51 @@ recipesRouter.get("/:recipeId", async (req, res, next) => {
   }
 });
 
-// GET all recipes 
-recipesRouter.get('/', async (req, res, next) => {
+// GET all recipes - Existing endpoint was modified to handle both all recipes and filtered recipes 
+recipesRouter.get("/", async (req, res, next) => {
   try {
-    const recipes = await prisma.recipes.findMany({
-      include: {
-        ratingsAndReviews: true
+    const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
+
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const userId = decoded.id;
+
+      // Fetch user preferences
+      const user = await prisma.users.findUnique({
+        where: { id: userId },
+        include: { preferences: true },
+      });
+
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
       }
-  });
-    res.json(recipes);
+
+      const preferences = user.preferences[0];
+
+      // Filter recipes based on user preferences
+      const recipes = await prisma.recipes.findMany({
+        where: {
+          AND: Object.entries(preferences).map(([key, value]) => ({
+            [key]: value,
+          })),
+        },
+        include: {
+          ratingsAndReviews: true,
+        },
+      });
+
+      return res.status(200).send(recipes);
+    } else {
+      const recipes = await prisma.recipes.findMany({
+        include: {
+          ratingsAndReviews: true,
+        },
+      });
+      return res.status(200).send(recipes);
+    }
   } catch (error) {
-    console.error('Error when getting recipes:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error when getting recipes:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
