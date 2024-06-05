@@ -182,9 +182,18 @@ const RecipeDetails = ({ recipe, isAdmin, preferences }) => {
               <Card.Text>
                 <strong>Instructions:</strong> {recipe.instructions} <br></br>
                 <strong>Servings:</strong> {recipe.servings},
-                <br></br><strong>Diet:</strong> 
-                {recipe.glutenFree && <p>Gluten Free, </p>}{recipe.ketogenic && <p>Ketogenic, </p>}{recipe.lactoVegetarian && <p>LactoVegetarian, </p>}{recipe.ovoVegetarian && <p>OvoVegetarian, </p>}{recipe.vegan && <p>Vegan, </p>}
-                {recipe.pescetarian && <p>Pescetarian, </p>}{recipe.paleo && <p>Paleo, </p>}{recipe.primal && <p>Primal, </p>}{recipe.lowFODMAP && <p>lowFODMAP, </p>}{recipe.whole30 && <p>Whole30</p>}
+                <br></br><strong>Diet:</strong>{" "}
+                {Object.entries(recipe).map(([key, value]) => {
+                  if (value && key !== "id" && key !== "title" && key !== "instructions" && key !== "servings" && key !== "imageurl" && key !== "ratingsAndReviews") {
+                    return (
+                      <span key={key}>
+                        {key.charAt(0).toUpperCase() + key.slice(1)}, {" "}
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+                <br></br>
                 <strong>Reviews:</strong>
                 {filteredReviews.length > 0 ? (
                   filteredReviews.map((review) => (
