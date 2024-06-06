@@ -5,7 +5,7 @@ import "../styling/Home_Register.css";
 
 import Form from 'react-bootstrap/Form';
 
-const Register = ({setToken}) => {
+const Register = ({ setToken }) => {
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regUsername, setRegUsername] = useState('');
@@ -44,7 +44,7 @@ const Register = ({setToken}) => {
       const json = await result.json();
       console.log(json);
 
-      if(json.token){
+      if (json.token) {
         localStorage.setItem("token", json.token);
         setToken(json.token);
         navigate("/");
@@ -108,18 +108,18 @@ const Register = ({setToken}) => {
             <br></br>
             <h2 className="Auth-form-title">Preferences (Optional)</h2>
             <Form.Group>
-            {Object.keys(preferences).map((preference) => (
-              <div key={preference} className="mb-3">
-                <Form.Check
-                  type="checkbox"
-                  name={preference}
-                  label={preference.charAt(0).toUpperCase() + preference.slice(1)}
-                  checked={preferences[preference]}
-                  onChange={handlePreferenceChange}
-                />
-              </div>
-            ))}
-          </Form.Group>
+              {Object.keys(preferences).map((preference) => (
+                <div key={preference} className="mb-3">
+                  <Form.Check
+                    type="checkbox"
+                    name={preference}
+                    label={preference.charAt(0).toUpperCase() + preference.slice(1)}
+                    checked={preferences[preference]}
+                    onChange={handlePreferenceChange}
+                  />
+                </div>
+              ))}
+            </Form.Group>
             <div className="d-grid gap-2 mt-3">
               <button type="submit" className="btn btn-primary">
                 Submit
