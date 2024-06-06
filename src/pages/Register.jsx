@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import "../styling/Home_Register.css";
 
+import Form from 'react-bootstrap/Form';
+
 const Register = ({setToken}) => {
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -54,10 +56,11 @@ const Register = ({setToken}) => {
   };
 
   const handlePreferenceChange = (e) => {
-    setPreferences({
-      ...preferences,
-      [e.target.name]: e.target.checked,
-    });
+    const { name, checked } = e.target;
+    setPreferences((prevPreferences) => ({
+      ...prevPreferences,
+      [name]: checked,
+    }));
   };
 
   return (
@@ -104,19 +107,19 @@ const Register = ({setToken}) => {
             </div>
             <br></br>
             <h2 className="Auth-form-title">Preferences (Optional)</h2>
-            <div>
-              {Object.keys(preferences).map((preference) => (
-                <div key={preference}>
-                  <input
-                    type="checkbox"
-                    name={preference}
-                    checked={preferences[preference]}
-                    onChange={handlePreferenceChange}
-                  />
-                  <label htmlFor={preference}>{preference}</label>
-                </div>
-              ))}
-            </div>
+            <Form.Group>
+            {Object.keys(preferences).map((preference) => (
+              <div key={preference} className="mb-3">
+                <Form.Check
+                  type="checkbox"
+                  name={preference}
+                  label={preference.charAt(0).toUpperCase() + preference.slice(1)}
+                  checked={preferences[preference]}
+                  onChange={handlePreferenceChange}
+                />
+              </div>
+            ))}
+          </Form.Group>
             <div className="d-grid gap-2 mt-3">
               <button type="submit" className="btn btn-primary">
                 Submit

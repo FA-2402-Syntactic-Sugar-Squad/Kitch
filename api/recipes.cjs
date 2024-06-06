@@ -2,6 +2,10 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const { createRatingForRecipe, createReviewForRecipe } = require("../db/index.cjs");
+
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
 const express = require("express")
 const recipesRouter = express.Router();
 
@@ -71,12 +75,17 @@ recipesRouter.get("/", async (req, res, next) => {
 
       const preferences = user.preferences[0];
 
+      const filters = Object.entries(preferences)
+        .filter(([key, value]) => value === true)
+        .reduce((acc, [key]) => {
+          acc[key] = true;
+          return acc;
+        }, {});
+
       // Filter recipes based on user preferences
       const recipes = await prisma.recipes.findMany({
         where: {
-          AND: Object.entries(preferences).map(([key, value]) => ({
-            [key]: value,
-          })),
+          AND: filters
         },
         include: {
           ratingsAndReviews: true,
