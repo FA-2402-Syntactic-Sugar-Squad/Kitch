@@ -8,7 +8,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import "../App.css";
 
-const RecipeDetails = ({ recipe, isAdmin, preferences }) => {
+const RecipeDetails = ({ recipe, isAdmin}) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [userId, setUserId] = useState(null);
   const [token, setToken] = useState(null);

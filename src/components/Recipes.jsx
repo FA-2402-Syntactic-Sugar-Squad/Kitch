@@ -12,7 +12,9 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
   useEffect(() => {
     const fetchAllRecipes = async () => {
       try {
-        const result = await fetch(`/api/recipes/`);
+        const result = await fetch(`/api/recipes/`, {
+          headers: token ? { "Authorization": `Bearer ${token}`} : {},
+        });
         const recipeResult = await result.json();
         setRecipes(recipeResult);
       } catch (error) {
@@ -20,7 +22,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
       }
     };
     fetchAllRecipes();
-  }, []);
+  }, [token]);
 
 
   useEffect(() => {
@@ -29,7 +31,9 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
     } else {
       const fetchAllRecipes = async () => {
         try {
-          const result = await fetch(`/api/recipes/`);
+          const result = await fetch(`/api/recipes/`, {
+            headers: token ? { "Authorization": `Bearer ${token}`} : {},
+          });
           const recipeResult = await result.json();
           setRecipes(recipeResult);
         } catch (error) {
@@ -38,7 +42,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
       };
       fetchAllRecipes(); 
     }
-  }, [searchResults]);
+  }, [searchResults, token]);
 
 
   const handleClick = (recipe) => {
@@ -49,6 +53,7 @@ const Recipes = ({ token, onRecipeSelect, searchResults, isAdmin }) => {
     }
   };
 
+  //ADMINS 
   const handleEdit = async (recipeId) => {
     const newImageUrl = prompt('Enter the new image URL:');
     if (!newImageUrl) return;
